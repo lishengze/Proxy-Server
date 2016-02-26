@@ -7,13 +7,8 @@ function hereDoc(f) {
 }
 var fileData = hereDoc(function () {
 /*// Created by li.shengze on 2016/2/24.
-// 客户端Api分为两部分， 请求与数据回调监听。
-// 客户的请求必须在登陆之后才能进行。
-// 客户在输入登陆信息后直接发出前置链接与用户登陆请求。
-// 前置链接后才能进行用户登陆。
-// 不同的链接失败给不同的错。
 
-var EVENTS           = require('./events.json');
+var EVENTS           = new events();
 var isHttps          = false;
 if (true === isHttps) {
 //	var ipAddress  = 'https://192.168.10.11';
@@ -39,7 +34,7 @@ rootSocket.on('disconnect', function(){
     
 });
 
-rootSocket.on(EVENTS.NewUserReady, function(userInfo){
+rootSocket.on(EVENTS.NewUserReady, function(data){
 									
 	userSocket = io.connect(url + '/' + userInfo.UserID); 
     
@@ -51,16 +46,13 @@ rootSocket.on(EVENTS.NewUserReady, function(userInfo){
         
     });    
 
-    userSocket.on(EVENTS.NewUserConnectComplete, function(user){	
-	   userServer = user;	
-       userSocket.emit(EVENTS.RegisterFront, user);																					
+    userSocket.on(EVENTS.NewUserConnectComplete, function(data){	
+       userSocket.emit(EVENTS.RegisterFront, {});																					
 	});	
 							
 	userSocket.on(EVENTS.FrontConnected, function(callbackData){
-        var data = {};
-        data.reqField = userInfo;
-        data.user = userServer;
-	    userSocket.emit(EVENTS.ReqQrySysUserLoginTopic, data);																								
+        var reqField = userInfo;
+	    userSocket.emit(EVENTS.ReqQrySysUserLoginTopic, reqField);																								
 	});	
     
     userSocket.on(EVENTS.FrontDisConnected, function(callbackData){	
@@ -165,11 +157,8 @@ for(var i=beforeRspQryTopCpuInfoTopic;i<AfterRtnNetNonPartyLinkInfoTopic;i++) {
         funcName!=="ReqQryAppMonitorCfgTopic"
         ) {
             var eventMessageName = "EVENTS." + funcName;
-            fileData += "var " + funcName + " = function (reqData) {\n"
-                      + tabSpace[1] + "var data = {};\n"
-                      + tabSpace[1] + "data.reqData = reqData;\n"
-                      + tabSpace[1] + "data.user = userServer;\n"
-                      + tabSpace[1] + "userSocket.emit("+ eventMessageName +", data);\n"
+            fileData += "var " + funcName + " = function (reqField) {\n"
+                      + tabSpace[1] + "userSocket.emit("+ eventMessageName +", reqField);\n"
                       + "}\n\n";
         }        
 }

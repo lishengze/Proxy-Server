@@ -1,10 +1,4 @@
-// Created by li.shengze on 2016/2/24.
-// 客户端Api分为两部分， 请求与数据回调监听。
-// 客户的请求必须在登陆之后才能进行。
-// 客户在输入登陆信息后直接发出前置链接与用户登陆请求。
-// 前置链接后才能进行用户登陆。
-// 不同的链接失败给不同的错。
-var EVENTS           = require('./events.json');
+var EVENTS           = new events();
 var isHttps          = false;
 if (true === isHttps) {
 //	var ipAddress  = 'https://192.168.10.11';

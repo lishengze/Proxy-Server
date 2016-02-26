@@ -8,9 +8,16 @@ function hereDoc(f) {
 var fileData = hereDoc(function () {
 /*var fs               = require('fs');
 var spi              = require("./communication.js");
-var addon            = require("./build/Release/addon");
-var EVENTS           = require('./events.json');
-var user             = [];
+var addon            = require("./addon.node");
+
+var events           = require("./events.js");
+var EVENTS           = new events.EVENTS();
+
+var toolFunc         = require("./tool-function.js");
+var OutputMessage    = toolFunc.OutputMessage;
+
+var userConnection   = [];
+var userSocket       = [];
 var userCount        = 0;
 var isHttps          = false;
 
@@ -40,44 +47,34 @@ function onRequest(request, response){
 	}
 }
 
-var OutputMessage = function (info) {
-    console.log(info);
-}
-
 var realTimeSystemPath  = "tcp://172.1.128.165:18841";
 var innerTestSystemPath = "tcp://172.1.128.111:18842";
 
 io.on('connection', function(rootSocket) {	
 
 	rootSocket.on(EVENTS.NewUserCome, function(userInfo) {				
-		for (var i = 0; i < userCount; ++i)
-		{
-			if (user[i].userInfo.UserID === userInfo.UserID) {				
-				OutputMessage(userInfo.UserID + ' is already in.');
-				return;
-			}			
-		}
-        
-        var curUserIndex = userCount;
-        userCount++
-		user[curUserIndex] = {};         
-        user[curUserIndex].userInfo = userInfo;
-        user[curUserIndex].socket = io.of('/' + userInfo.UserID);
-        
-        user[curUserIndex].socket.on ('connection', function (curSocket) {
-                            
-            user[curUserIndex].userApi = new addon.FtdcSysUserApi_Wrapper();        
-            user[curUserIndex].Spi = new spi.Spi();
-            user[curUserIndex].RequestID = 1;
-            user[curUserIndex].Spi.user = user[curUserIndex];
-                       
-            curSocket.emit(EVENTS.NewUserConnectComplete, user[curUserIndex]);
+        if (undefined === userConnection[userInfo.UserID]) {
             
-            curSocket.on(EVENTS.RegisterFront, function(user) {
+        } 
+        
+		userConnection[userInfo.UserID] = {};         
+        userConnection[userInfo.UserID].userInfo = userInfo;
+        userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
+        
+        userConnection[userInfo.UserID].socket .on ('connection', function (curSocket) {
+                            
+            userSocket[curSocket.id].userApi = new addon.FtdcSysUserApi_Wrapper();        
+            userSocket[curSocket.id].Spi = new spi.Spi();
+            userSocket[curSocket.id].RequestID = 1;
+            userSocket[curSocket.id].Spi.user = userSocket[curSocket.id];
+                       
+            curSocket.emit(EVENTS.NewUserConnectComplete, {});
+            
+            curSocket.on(EVENTS.RegisterFront, function() {
 				OutputMessage('Connect Front!');
-                user.userApi.RegisterFront(realTimeSystemPath);   
-                user.userApi.RegisterSpi(user.Spi);
-                user.userApi.Init();   				
+                userSocket[curSocket.id].userApi.RegisterFront(realTimeSystemPath);   
+                userSocket[curSocket.id].userApi.RegisterSpi(userSocket[curSocket.id].Spi);
+                userSocket[curSocket.id].userApi.Init();   				
 			});
         
 */});
@@ -119,8 +116,8 @@ for(var i=beforeRspQryTopCpuInfoTopic;i<AfterRtnNetNonPartyLinkInfoTopic;i++) {
         funcName!=="ReqQryKeyFileInfoTopic"&&funcName!=="ReqQryHostMonitorCfgTopic"&&
         funcName!=="ReqQryAppMonitorCfgTopic"
         ) {
-            fileData += tabSpace[3] + "curSocket.on(EVENTS." + funcName + ", function(data) {\n"
-                      + tabSpace[4] + "var flag = data.user.userApi." + funcName + "(data.reqField, data.user.RequestID++);\n"
+            fileData += tabSpace[3] + "curSocket.on(EVENTS." + funcName + ", function(reqField) {\n"
+                      + tabSpace[4] + "var flag = userSocket[curSocket.id].userApi." + funcName + "(reqField, userSocket[curSocket.id].RequestID++);\n"
                       + tabSpace[4] + "if ( -1 === flag) {\n"
                       + tabSpace[5] + "curSocket.emit(EVENTS."+ funcName +"Failed, flag);\n"
                       + tabSpace[4] + "}\n"
@@ -133,7 +130,7 @@ fileData += hereDoc(function () {
 /*               									
 	    }); // rootSocket.on('new user', function(userInfo) end!
         
-        rootSocket.emit(EVENTS.NewUserReady, userInfo);
+        rootSocket.emit(EVENTS.NewUserReady, {});
         	
     }); //rootSocket.on(EVENTS.NewUserCome);     	
 }); // io.on('connection', function(rootSocket)) end!

@@ -6,7 +6,9 @@ function hereDoc(f) {
     return f.toString().replace(/^[^\/]+\/\*!?\s?/, '').replace(/\*\/[^\/]+$/, '');
 }
 var fileData = hereDoc(function () {
-/*var EVENTS = require('./events.json');
+/*var events    = require("./events.js");
+var EVENTS    = new events.EVENTS();
+
 var Spi = function(){
     
     this.user = {};    
@@ -16,15 +18,11 @@ var Spi = function(){
     }
     
     this.OnFrontDisConnected = function (nReason) {
-        if (nReason instanceof Object) { 
-            this.user.socket.emit(EVENTS.FrontDisConnected, nReason);
-        }        
+        this.user.socket.emit(EVENTS.FrontDisConnected, nReason);    
     }
     
     this.OnHeartBeatWarning = function (nTimeLapse) {
-        if (nTimeLapse instanceof Object) { 
-            this.user.socket.emit(EVENTS.HeartBeatWarning, nTimeLapse);
-        }        
+        this.user.socket.emit(EVENTS.HeartBeatWarning, nTimeLapse);      
     }         
           
 */});
@@ -49,22 +47,17 @@ for(var i=beforeRspQryTopCpuInfoTopic;i<AfterRtnNetNonPartyLinkInfoTopic;i++){
         var pValueName = "p" + fieldName;
 		        
         if (funcType === "Rsp") {
-            var funcCallbackDataName = funcName + "CallbackData";
-		    fileData += tabSpace[1] + "this." + funcCallbackDataName + " = [];\n";
+
             fileData += tabSpace[1] + "this.On" + funcName + " = function (" + pValueName  + ", pRspInfo, nRequestID, bIsLast) {\n";
-            fileData += tabSpace[2] + "if ("+ pValueName + " instanceof Object) { \n"
-                      + tabSpace[3] + "this." + funcCallbackDataName + ".push( " + pValueName +");\n"
-                      + tabSpace[2] + "}\n"
-				  
-            fileData += tabSpace[2] + "if (true === bIsLast) {\n"
-                      + tabSpace[3] + "this.user.socket.emit(" + "EVENTS." + funcName + ", " + "this." + funcCallbackDataName + ");\n"
-                      + tabSpace[3] + "this." + funcCallbackDataName + " = [];\n"
-                      + tabSpace[2] + "}\n";
+            fileData += tabSpace[2] + "var callbackData = {};\n"
+                      + tabSpace[2] + "callbackData." + pValueName + " = " + pValueName + ";\n"
+                      + tabSpace[2] + "callbackData.pRspInfo = pRspInfo;\n"
+                      + tabSpace[2] + "callbackData.nRequestID = nRequestID;\n"
+                      + tabSpace[2] + "callbackData.bIsLast = bIsLast;\n"
+                      + tabSpace[2] + "this.user.socket.emit(" + "EVENTS." + funcName + ", " + "callbackData);\n"                         
         } else {
-            fileData += tabSpace[1] + "this.On" + funcName + " = function (" + pValueName + "){ \n";
-            fileData += tabSpace[2] + "if ("+ pValueName + " instanceof Object) { \n"
-                      + tabSpace[3] + "this.user.socket.emit(" + "EVENTS." + funcName + ", " + pValueName + ");\n"
-                      + tabSpace[2] + "}\n"
+            fileData += tabSpace[1] + "this.On" + funcName + " = function (" + pValueName + "){ \n" 
+                      + tabSpace[2] + "this.user.socket.emit(" + "EVENTS." + funcName + ", " + pValueName + ");\n"
         }     
 		
         fileData += tabSpace[1] + "}\n\n";
