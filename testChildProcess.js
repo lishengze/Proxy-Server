@@ -1,30 +1,29 @@
 // var spawn = require('child_process').spawn();
 // var free = spawn('ll  ', ['-t']);
 
-// // ²¶»ñ±ê×¼Êä³ö²¢½«Æä´òÓ¡µ½¿ØÖÆÌ¨ 
+// // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨ 
 // free.stdout.on('data', function (data) { 
 //  console.log('standard output:\n' + data); 
 //  });
 
-// // ²¶»ñ±ê×¼´íÎóÊä³ö²¢½«Æä´òÓ¡µ½¿ØÖÆÌ¨ 
+// // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨ 
 // free.stderr.on('data', function (data) { 
 //  console.log('standard error output:\n' + data); 
 //  });
 
-// // ×¢²á×Ó½ø³Ì¹Ø±ÕÊÂ¼þ 
+// // ×¢ï¿½ï¿½ï¿½Ó½ï¿½ï¿½Ì¹Ø±ï¿½ï¿½Â¼ï¿½ 
 // free.on('exit', function (code, signal) { 
 //  console.log('child process eixt ,exit:' + code); 
 //  });
  
  
-//  var spawn = require('child_process').spawn,
-//     grep  = spawn('grep', ['ssh']);
+ var spawn = require('child_process').spawn,
+    grep  = spawn('grep', ['ssh']);
 
-// console.log('Spawned child pid: ' + grep.pid);
-// grep.stdin.end();
+console.log('Spawned child pid: ' + grep.pid);
+grep.stdin.end();
 
-//  var spawn = require('child_process').spawn,
-//     mkdir  = spawn('mkdir', ['lee']);
+
     
 // var spawn = require('child_process').spawn,
 //     ls    = spawn('ll', ['-t']);
@@ -41,17 +40,47 @@
 //   console.log('child process exited with code ' + code);
 // });
 
-var exec = require('child_process').exec; 
- var cmdStr = 'mkdir lee';
- exec(cmdStr, function(err,stdout,stderr){
-     if(err) {
-         console.log('get weather api error:'+stderr);
-     } else {
-         /*
-         Õâ¸östdoutµÄÄÚÈÝ¾ÍÊÇÉÏÃæÎÒcurl³öÀ´µÄÕâ¸ö¶«Î÷£º
-        {"weatherinfo":{"city":"±±¾©","cityid":"101010100","temp":"3","WD":"Î÷±±·ç","WS":"3¼¶","SD":"23%","WSE":"3","time":"21:20","isRadar":"1","Radar":"JC_RADAR_AZ9010_JB","njd":"ÔÝÎÞÊµ¿ö","qy":"1019"}}
-         */
-         var data = JSON.parse(stdout);
-         console.log(data);
-     }
- });
+// var exec = require('child_process').exec; 
+//  var cmdStr = 'mkdir lee';
+//  exec(cmdStr, function(err,stdout,stderr){
+//      if(err) {
+//          console.log('get weather api error:'+stderr);
+//      } else {
+//          /*
+//          ï¿½ï¿½ï¿½ï¿½stdoutï¿½ï¿½ï¿½ï¿½ï¿½Ý¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½curlï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//         {"weatherinfo":{"city":"ï¿½ï¿½ï¿½ï¿½","cityid":"101010100","temp":"3","WD":"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½","WS":"3ï¿½ï¿½","SD":"23%","WSE":"3","time":"21:20","isRadar":"1","Radar":"JC_RADAR_AZ9010_JB","njd":"ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½","qy":"1019"}}
+//          */
+//          var data = JSON.parse(stdout);
+//          console.log(data);
+//      }
+//  });
+
+// var spawn = require('child_process').spawn,
+//     ls    = spawn('ls', ['-lt']);
+
+// ls.stdout.on('data', function (data) {
+//   console.log('stdout: ' + data);
+// });
+
+// ls.stderr.on('data', function (data) {
+//   console.log('stderr: ' + data);
+// });
+
+// ls.on('close', function (code) {
+//   console.log('child process exited with code ' + code);
+// });
+
+ // åˆ›å»ºç›®å½•;
+// var spawn = require('child_process').spawn,
+//     mkdir  = spawn('mkdir', ['-v', 'lee2']);
+
+
+// mkdir.stdout.on('data', function (data) {
+//   console.log('mkdir stdout: ' + data);
+// });
+
+// mkdir.on('close', function (code) {
+//   console.log('mkdir child process exited with code ' + code);
+// });
+
+var spawn = require('child_process').spawn('mkdir', ['-v', 'lee2']);
