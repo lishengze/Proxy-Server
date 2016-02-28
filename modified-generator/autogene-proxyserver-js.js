@@ -63,7 +63,9 @@ io.on('connection', function(rootSocket) {
         
         userConnection[userInfo.UserID].socket .on ('connection', function (curSocket) {
                             
-            userSocket[curSocket.id].userApi = new addon.FtdcSysUserApi_Wrapper();        
+            // 为用户创建专属的工作目录，以用户ID为名;    
+            var spawn = require('child_process').spawn('mkdir', [user[curUserIndex].userInfo.UserID]);                            
+            user[curUserIndex].userApi = new addon.FtdcSysUserApi_Wrapper(user[curUserIndex].userInfo.UserID);          
             userSocket[curSocket.id].Spi = new spi.Spi();
             userSocket[curSocket.id].RequestID = 1;
             userSocket[curSocket.id].Spi.user = userSocket[curSocket.id];

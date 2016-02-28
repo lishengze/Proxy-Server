@@ -1,6 +1,6 @@
 var fs               = require('fs');
 var spi              = require("./communication.js");
-var addon            = require("./addon.node");
+// var addon            = require("./addon.node");
 
 var events           = require("./events.js");
 var EVENTS           = new events.EVENTS();
@@ -54,8 +54,15 @@ io.on('connection', function(rootSocket) {
         userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
         
         userConnection[userInfo.UserID].socket .on ('connection', function (curSocket) {
-                            
-            userSocket[curSocket.id].userApi = new addon.FtdcSysUserApi_Wrapper();        
+               
+            OutputMessage("Proxy-Server: " + userSocket[curSocket.id].userInfo.UserID + " connect completed!");
+                
+            // 为用户创建专属的工作目录，以用户ID为名;    
+            var spawn = require('child_process').spawn('mkdir', [userSocket[curSocket.id].userInfo.UserID]);   
+                                     
+            // userSocket[curSocket.id].userApi = new addon.FtdcSysUserApi_Wrapper(userSocket[curSocket.id].userInfo.UserID);
+            userSocket[curSocket.id].userApi = "new addon.FtdcSysUserApi_Wrapper(userSocket[curSocket.id].userInfo.UserID)";                
+                                    
             userSocket[curSocket.id].Spi = new spi.Spi();
             userSocket[curSocket.id].RequestID = 1;
             userSocket[curSocket.id].Spi.user = userSocket[curSocket.id];
@@ -63,10 +70,12 @@ io.on('connection', function(rootSocket) {
             curSocket.emit(EVENTS.NewUserConnectComplete, {});
             
             curSocket.on(EVENTS.RegisterFront, function() {
-				OutputMessage('Connect Front!');
-                userSocket[curSocket.id].userApi.RegisterFront(realTimeSystemPath);   
-                userSocket[curSocket.id].userApi.RegisterSpi(userSocket[curSocket.id].Spi);
-                userSocket[curSocket.id].userApi.Init();   				
+				OutputMessage('\n------  Proxy-Server: Connect Front!-------\n');
+                // userSocket[curSocket.id].userApi.RegisterFront(realTimeSystemPath);   
+                // userSocket[curSocket.id].userApi.RegisterSpi(userSocket[curSocket.id].Spi);
+                // userSocket[curSocket.id].userApi.Init();   
+                
+                curSocket.emit("Test Front", 1);					
 			});
         
             curSocket.on(EVENTS.ReqQryTopMemInfoTopic, function(reqField) {

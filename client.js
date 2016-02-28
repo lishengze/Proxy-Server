@@ -1,5 +1,6 @@
 var EVENTS           = new events();
 var isHttps          = false;
+
 if (true === isHttps) {
 //	var ipAddress  = 'https://192.168.10.11';
 	var ipAddress  = 'https://localhost'
@@ -8,9 +9,11 @@ if (true === isHttps) {
 	var url        = ipAddress + ':' + port.toString();
 	var rootSocket = io.connect(url,{secure:true});	
 } else {
-	// var url        = 'http://localhost';
-    var url        = 'http://172.1.128.169';
-	var rootSocket = io.connect(url);
+	var localUrl         = 'http://localhost';
+    var serverUrl        = 'http://172.1.128.169';
+	var rootSocket       = io.connect(localUrl);
+    
+    OutputMessage("root connect!");
 }
 
 var userSocket;
@@ -32,7 +35,11 @@ var TestAddNewUser = function () {
     addNewUser(userinfo);  
 }
 
-rootSocket.on(EVENTS.NewUserReady, function(userInfo){
+rootSocket.on("user reconnected", function(UserID) {
+   OutputMessage("Client: " + UserID + " has already logged!"); 
+});
+
+rootSocket.on(EVENTS.NewUserReady, function(data){
 							
     OutputMessage("Client: new user " + userInfo.UserID + " ready!");     
                            		
@@ -45,7 +52,14 @@ rootSocket.on(EVENTS.NewUserReady, function(userInfo){
 	   userServer = user;	
        userSocket.emit(EVENTS.RegisterFront, user);																					
 	});	
-							
+		
+    userSocket.on("Test Front", function(user){
+        
+        var outputStr = "\n+++++++++  Communication FrontConnected! ++++++++\n";
+    	OutputMessage(outputStr);
+                
+    });
+        					
 	userSocket.on(EVENTS.FrontConnected, function(callbackData){
         
         var outputStr = "\n+++++++++  Communication FrontConnected! ++++++++\n";
