@@ -11,7 +11,8 @@ if (true === isHttps) {
 } else {
 	var localUrl         = 'http://localhost';
     var serverUrl        = 'http://172.1.128.169';
-	var rootSocket       = io.connect(localUrl);
+    var curUrl           = localUrl;
+	var rootSocket       = io.connect(curUrl);
     
     OutputMessage("root connect!");
 }
@@ -43,9 +44,9 @@ rootSocket.on(EVENTS.NewUserReady, function(data){
 							
     OutputMessage("Client: new user " + userInfo.UserID + " ready!");     
                            		
-	userSocket = io.connect(url + '/' + userInfo.UserID); 
+	userSocket = io.connect(curUrl + '/' + userInfo.UserID); 
     
-    userSocket.on(EVENTS.NewUserConnectComplete, function(user){	
+    userSocket.on(EVENTS.NewUserConnectComplete, function(data){	
         
        OutputMessage("Client: " + user.userInfo.UserID + "  connect completed!");  
        

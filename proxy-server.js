@@ -55,15 +55,17 @@ io.on('connection', function(rootSocket) {
         
 		userConnection[userInfo.UserID] = {};         
         userConnection[userInfo.UserID].userInfo = userInfo;
+        OutputMessage(userConnection);
         userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
+        
+        // 为用户创建专属的工作目录，以用户ID为名;    
+        var spawn = require('child_process').spawn('mkdir', [userInfo.UserID]);  
         
         userConnection[userInfo.UserID].socket.on ('connection', function (curSocket) {
                
-            OutputMessage("Proxy-Server: " + userSocket[curSocket.id].userInfo.UserID + " connect completed!");
-                
-            // 为用户创建专属的工作目录，以用户ID为名;    
-            var spawn = require('child_process').spawn('mkdir', [userSocket[curSocket.id].userInfo.UserID]);   
-                                     
+            OutputMessage("Proxy-Server: new user connect completed!");
+            
+            userSocket[curSocket.id] = {};            
             // userSocket[curSocket.id].userApi = new addon.FtdcSysUserApi_Wrapper(userSocket[curSocket.id].userInfo.UserID);
             userSocket[curSocket.id].userApi = "new addon.FtdcSysUserApi_Wrapper(userSocket[curSocket.id].userInfo.UserID)";                
                                     
