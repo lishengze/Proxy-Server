@@ -18,8 +18,10 @@ if (true === isHttps) {
 	var url        = ipAddress + ':' + port.toString();
 	var rootSocket = io.connect(url,{secure:true});	
 } else {
-	var url        = 'http://localhost';
-	var rootSocket = io.connect(url);
+	var localUrl         = 'http://localhost';
+    var serverUrl        = 'http://172.1.128.169';
+    var curUrl           = localUrl;
+	var rootSocket       = io.connect(curUrl);
 }
 
 var userSocket;
@@ -34,9 +36,31 @@ rootSocket.on('disconnect', function(){
     
 });
 
+var addNewUser = function (userinfo) {
+    userInfo = userinfo;
+    rootSocket.emit(EVENTS.NewUserCome, userinfo);
+}
+
+var TestAddNewUser = function () {
+    var userinfo = {};
+    userinfo           = new CShfeFtdcReqQrySysUserLoginField();
+    userinfo.UserID    = "admin";
+    userinfo.Password  = "admin";
+    userinfo.VersionID = "2.0.0.0";  
+    
+    addNewUser(userinfo);  
+}
+
+rootSocket.on("user reconnected", function(UserID) {
+   OutputMessage("Client: " + UserID + " has already logged!"); 
+});
+
+
 rootSocket.on(EVENTS.NewUserReady, function(data){
+    
+    OutputMessage("Client: new user " + userInfo.UserID + " ready!");     
 									
-	userSocket = io.connect(url + '/' + userInfo.UserID); 
+	userSocket = io.connect(curUrl + '/' + userInfo.UserID); 
     
     userSocket.on('connect_error', function(errorObj){
     
@@ -46,10 +70,16 @@ rootSocket.on(EVENTS.NewUserReady, function(data){
         
     });    
 
-    userSocket.on(EVENTS.NewUserConnectComplete, function(data){	
+    userSocket.on(EVENTS.NewUserConnectComplete, function(data){
+       OutputMessage("Client: " + userInfo.UserID + "  connect completed!");  	
        userSocket.emit(EVENTS.RegisterFront, {});																					
 	});	
-							
+				
+    userSocket.on("Test Front", function(data){        
+        var outputStr = "\n+++++++++  Communication FrontConnected! ++++++++\n";
+    	OutputMessage(outputStr);                
+    });                
+                			
 	userSocket.on(EVENTS.FrontConnected, function(callbackData){
         var reqField = userInfo;
 	    userSocket.emit(EVENTS.ReqQrySysUserLoginTopic, reqField);																								

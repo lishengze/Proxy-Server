@@ -1,0 +1,403 @@
+Proxy-Server: root connect complete!
+userConnection:
+
+[ NewUserID_1: { userInfo: 
+     { UserID: 'NewUserID_1',
+       Password: '1234567',
+       VersionID: '2.0.0.0' } } ]
+userConnection[userInfo.UserID].socket.Namespace.name:
+
+Namespace {
+  name: '/NewUserID_1',
+  server: 
+   Server {
+     nsps: { '/': [Object], '/NewUserID_1': [Circular] },
+     _path: '/socket.io',
+     _serveClient: true,
+     _adapter: [Function: Adapter],
+     _origins: '*:*',
+     sockets: 
+      Namespace {
+        name: '/',
+        server: [Circular],
+        sockets: [Object],
+        connected: [Object],
+        fns: [],
+        ids: 0,
+        adapter: [Object],
+        _events: [Object],
+        _eventsCount: 1 },
+     eio: 
+      Server {
+        clients: [Object],
+        clientsCount: 1,
+        pingTimeout: 60000,
+        pingInterval: 25000,
+        upgradeTimeout: 10000,
+        maxHttpBufferSize: 100000000,
+        transports: [Object],
+        allowUpgrades: true,
+        allowRequest: [Function: bound ],
+        cookie: 'io',
+        cookiePath: false,
+        perMessageDeflate: [Object],
+        httpCompression: [Object],
+        ws: [Object],
+        _events: [Object],
+        _eventsCount: 1 },
+     httpServer: 
+      Server {
+        domain: null,
+        _events: [Object],
+        _eventsCount: 5,
+        _maxListeners: undefined,
+        _connections: 2,
+        _handle: [Object],
+        _usingSlaves: false,
+        _slaves: [],
+        _unref: false,
+        allowHalfOpen: true,
+        pauseOnConnect: false,
+        httpAllowHalfOpen: false,
+        timeout: 120000,
+        _pendingResponseData: 0,
+        _connectionKey: '6::::80' },
+     engine: 
+      Server {
+        clients: [Object],
+        clientsCount: 1,
+        pingTimeout: 60000,
+        pingInterval: 25000,
+        upgradeTimeout: 10000,
+        maxHttpBufferSize: 100000000,
+        transports: [Object],
+        allowUpgrades: true,
+        allowRequest: [Function: bound ],
+        cookie: 'io',
+        cookiePath: false,
+        perMessageDeflate: [Object],
+        httpCompression: [Object],
+        ws: [Object],
+        _events: [Object],
+        _eventsCount: 1 } },
+  sockets: {},
+  connected: {},
+  fns: [],
+  ids: 0,
+  adapter: Adapter { nsp: [Circular], rooms: {}, sids: {}, encoder: Encoder {} } }
+curSocket.Namespace.name:
+
+Socket {
+  nsp: 
+   Namespace {
+     name: '/NewUserID_1',
+     server: 
+      Server {
+        nsps: [Object],
+        _path: '/socket.io',
+        _serveClient: true,
+        _adapter: [Function: Adapter],
+        _origins: '*:*',
+        sockets: [Object],
+        eio: [Object],
+        httpServer: [Object],
+        engine: [Object] },
+     sockets: { '/NewUserID_1#UaXifWW--JYCRu41AAAA': [Circular] },
+     connected: { '/NewUserID_1#UaXifWW--JYCRu41AAAA': [Circular] },
+     fns: [],
+     ids: 0,
+     adapter: 
+      Adapter {
+        nsp: [Circular],
+        rooms: [Object],
+        sids: [Object],
+        encoder: Encoder {} },
+     _events: { connection: [Function] },
+     _eventsCount: 1 },
+  server: 
+   Server {
+     nsps: { '/': [Object], '/NewUserID_1': [Object] },
+     _path: '/socket.io',
+     _serveClient: true,
+     _adapter: [Function: Adapter],
+     _origins: '*:*',
+     sockets: 
+      Namespace {
+        name: '/',
+        server: [Circular],
+        sockets: [Object],
+        connected: [Object],
+        fns: [],
+        ids: 0,
+        adapter: [Object],
+        _events: [Object],
+        _eventsCount: 1 },
+     eio: 
+      Server {
+        clients: [Object],
+        clientsCount: 1,
+        pingTimeout: 60000,
+        pingInterval: 25000,
+        upgradeTimeout: 10000,
+        maxHttpBufferSize: 100000000,
+        transports: [Object],
+        allowUpgrades: true,
+        allowRequest: [Function: bound ],
+        cookie: 'io',
+        cookiePath: false,
+        perMessageDeflate: [Object],
+        httpCompression: [Object],
+        ws: [Object],
+        _events: [Object],
+        _eventsCount: 1 },
+     httpServer: 
+      Server {
+        domain: null,
+        _events: [Object],
+        _eventsCount: 5,
+        _maxListeners: undefined,
+        _connections: 2,
+        _handle: [Object],
+        _usingSlaves: false,
+        _slaves: [],
+        _unref: false,
+        allowHalfOpen: true,
+        pauseOnConnect: false,
+        httpAllowHalfOpen: false,
+        timeout: 120000,
+        _pendingResponseData: 0,
+        _connectionKey: '6::::80' },
+     engine: 
+      Server {
+        clients: [Object],
+        clientsCount: 1,
+        pingTimeout: 60000,
+        pingInterval: 25000,
+        upgradeTimeout: 10000,
+        maxHttpBufferSize: 100000000,
+        transports: [Object],
+        allowUpgrades: true,
+        allowRequest: [Function: bound ],
+        cookie: 'io',
+        cookiePath: false,
+        perMessageDeflate: [Object],
+        httpCompression: [Object],
+        ws: [Object],
+        _events: [Object],
+        _eventsCount: 1 } },
+  adapter: 
+   Adapter {
+     nsp: 
+      Namespace {
+        name: '/NewUserID_1',
+        server: [Object],
+        sockets: [Object],
+        connected: [Object],
+        fns: [],
+        ids: 0,
+        adapter: [Circular],
+        _events: [Object],
+        _eventsCount: 1 },
+     rooms: { '/NewUserID_1#UaXifWW--JYCRu41AAAA': [Object] },
+     sids: { '/NewUserID_1#UaXifWW--JYCRu41AAAA': [Object] },
+     encoder: Encoder {} },
+  id: '/NewUserID_1#UaXifWW--JYCRu41AAAA',
+  client: 
+   Client {
+     server: 
+      Server {
+        nsps: [Object],
+        _path: '/socket.io',
+        _serveClient: true,
+        _adapter: [Function: Adapter],
+        _origins: '*:*',
+        sockets: [Object],
+        eio: [Object],
+        httpServer: [Object],
+        engine: [Object] },
+     conn: 
+      Socket {
+        id: 'UaXifWW--JYCRu41AAAA',
+        server: [Object],
+        upgrading: false,
+        upgraded: true,
+        readyState: 'open',
+        writeBuffer: [],
+        packetsFn: [],
+        sentCallbackFn: [Object],
+        cleanupFn: [Object],
+        request: [Object],
+        remoteAddress: '::ffff:127.0.0.1',
+        checkIntervalTimer: null,
+        upgradeTimeoutTimer: null,
+        pingTimeoutTimer: [Object],
+        transport: [Object],
+        _events: [Object],
+        _eventsCount: 3 },
+     encoder: Encoder {},
+     decoder: Decoder { reconstructor: null, _callbacks: [Object] },
+     id: 'UaXifWW--JYCRu41AAAA',
+     request: 
+      IncomingMessage {
+        _readableState: [Object],
+        readable: false,
+        domain: null,
+        _events: {},
+        _eventsCount: 0,
+        _maxListeners: undefined,
+        socket: [Object],
+        connection: [Object],
+        httpVersionMajor: 1,
+        httpVersionMinor: 1,
+        httpVersion: '1.1',
+        complete: true,
+        headers: [Object],
+        rawHeaders: [Object],
+        trailers: {},
+        rawTrailers: [],
+        upgrade: false,
+        url: '/socket.io/?EIO=3&transport=polling&t=LChnF2L',
+        method: 'GET',
+        statusCode: null,
+        statusMessage: null,
+        client: [Object],
+        _consuming: true,
+        _dumped: true,
+        _query: [Object],
+        res: [Object],
+        cleanup: [Function: cleanup],
+        read: [Function] },
+     onclose: [Function: bound ],
+     ondata: [Function: bound ],
+     onerror: [Function: bound ],
+     ondecoded: [Function: bound ],
+     sockets: 
+      { '/#UaXifWW--JYCRu41AAAA': [Object],
+        '/NewUserID_1#UaXifWW--JYCRu41AAAA': [Circular] },
+     nsps: { '/': [Object], '/NewUserID_1': [Circular] },
+     connectBuffer: [] },
+  conn: 
+   Socket {
+     id: 'UaXifWW--JYCRu41AAAA',
+     server: 
+      Server {
+        clients: [Object],
+        clientsCount: 1,
+        pingTimeout: 60000,
+        pingInterval: 25000,
+        upgradeTimeout: 10000,
+        maxHttpBufferSize: 100000000,
+        transports: [Object],
+        allowUpgrades: true,
+        allowRequest: [Function: bound ],
+        cookie: 'io',
+        cookiePath: false,
+        perMessageDeflate: [Object],
+        httpCompression: [Object],
+        ws: [Object],
+        _events: [Object],
+        _eventsCount: 1 },
+     upgrading: false,
+     upgraded: true,
+     readyState: 'open',
+     writeBuffer: [],
+     packetsFn: [],
+     sentCallbackFn: [ undefined ],
+     cleanupFn: [ [Function], [Function] ],
+     request: 
+      IncomingMessage {
+        _readableState: [Object],
+        readable: false,
+        domain: null,
+        _events: {},
+        _eventsCount: 0,
+        _maxListeners: undefined,
+        socket: [Object],
+        connection: [Object],
+        httpVersionMajor: 1,
+        httpVersionMinor: 1,
+        httpVersion: '1.1',
+        complete: true,
+        headers: [Object],
+        rawHeaders: [Object],
+        trailers: {},
+        rawTrailers: [],
+        upgrade: false,
+        url: '/socket.io/?EIO=3&transport=polling&t=LChnF2L',
+        method: 'GET',
+        statusCode: null,
+        statusMessage: null,
+        client: [Object],
+        _consuming: true,
+        _dumped: true,
+        _query: [Object],
+        res: [Object],
+        cleanup: [Function: cleanup],
+        read: [Function] },
+     remoteAddress: '::ffff:127.0.0.1',
+     checkIntervalTimer: null,
+     upgradeTimeoutTimer: null,
+     pingTimeoutTimer: 
+      { _called: false,
+        _idleTimeout: 85000,
+        _idlePrev: [Object],
+        _idleNext: [Object],
+        _idleStart: 9233,
+        _onTimeout: [Function],
+        _repeat: null },
+     transport: 
+      WebSocket {
+        readyState: 'open',
+        discarded: false,
+        socket: [Object],
+        writable: false,
+        perMessageDeflate: [Object],
+        supportsBinary: true,
+        _events: [Object],
+        _eventsCount: 4 },
+     _events: 
+      { close: [Object],
+        data: [Function: bound ],
+        error: [Function: bound ] },
+     _eventsCount: 3 },
+  rooms: {},
+  acks: {},
+  connected: true,
+  disconnected: false,
+  handshake: 
+   { headers: 
+      { host: 'localhost',
+        'user-agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0',
+        accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'accept-language': 'en-US,en;q=0.5',
+        'accept-encoding': 'gzip, deflate',
+        origin: 'null',
+        cookie: 'io=ZQ9UFrc4rcs8ZJvHAAAA',
+        connection: 'keep-alive' },
+     time: 'Mon Feb 29 2016 14:44:05 GMT+0800 (CST)',
+     address: '::ffff:127.0.0.1',
+     xdomain: true,
+     secure: false,
+     issued: 1456728245100,
+     url: '/socket.io/?EIO=3&transport=polling&t=LChnF2L',
+     query: { EIO: '3', transport: 'polling', t: 'LChnF2L' } } }
+Proxy-Server: new user connect completed!
+
+------  Proxy-Server: Connect Front!-------
+
+RegisterSpi Called!
+Succeed to connect: tcp://172.1.128.165:18841
+ReqQrySysUserLoginTopic Called!
+NewUserID_1
+MOF/vqgWs2E=@#$
+2.0.0.0
+
+++++++++++++++++ Communication OnRspQrySysUserLoginTopic: START! ++++++++++++++++++
+LoginTime :                 14:58:22
+UserID :                    NewUserID_1
+Privilege :                 63
+TradingDay :                20160229
+VersionFlag :               0
+bIsLastNew :                true
+++++++++++++++++ Communication OnRspQrySysUserLoginTopic: END! ++++++++++++++++++
+

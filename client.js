@@ -1,32 +1,38 @@
-var EVENTS           = new events();
-var isHttps          = false;
+// Created by li.shengze on 2016/2/24.
 
+var EVENTS           = new events();
+var isHttps          = true;
 if (true === isHttps) {
-//	var ipAddress  = 'https://192.168.10.11';
-	var ipAddress  = 'https://localhost'
-//	var ipAddress  = 'https://172.1.128.169';
+	var localUrl   = 'https://localhost'
+//	var serverUrl  = 'https://172.1.128.169';
 	var port       = 8000;
-	var url        = ipAddress + ':' + port.toString();
-	var rootSocket = io.connect(url,{secure:true});	
+	var curUrl     = localUrl + ':' + port.toString();
+	var rootSocket = io.connect(curUrl,{secure:true});	
 } else {
 	var localUrl         = 'http://localhost';
     var serverUrl        = 'http://172.1.128.169';
     var curUrl           = localUrl;
 	var rootSocket       = io.connect(curUrl);
-    
-    OutputMessage("root connect!");
 }
 
 var userSocket;
 var userServer;
 var userInfo;
 
+rootSocket.on('connect_error', function(errorObj){
+    
+});
+
+rootSocket.on('disconnect', function(){
+    
+});
+
 var addNewUser = function (userinfo) {
     userInfo = userinfo;
     rootSocket.emit(EVENTS.NewUserCome, userinfo);
 }
 
-var TestAddNewUser = function () {
+var TestAddNewUserAdmin = function () {
     var userinfo = {};
     userinfo           = new CShfeFtdcReqQrySysUserLoginField();
     userinfo.UserID    = "admin";
@@ -36,40 +42,50 @@ var TestAddNewUser = function () {
     addNewUser(userinfo);  
 }
 
+var TestAddNewUserID_1 = function () {
+    var userinfo = {};
+    userinfo           = new CShfeFtdcReqQrySysUserLoginField();
+    userinfo.UserID    = "NewUserID_1";
+    userinfo.Password  = "1234567";
+    userinfo.VersionID = "2.0.0.0";      
+    
+    addNewUser(userinfo);  
+}
+
 rootSocket.on("user reconnected", function(UserID) {
    OutputMessage("Client: " + UserID + " has already logged!"); 
 });
 
-rootSocket.on(EVENTS.NewUserReady, function(data){
-							
+
+rootSocket.on(EVENTS.NewUserReady, function(curUserInfo){
+    
+    if (userInfo.UserID !== curUserInfo.UserID ) return;
+    
     OutputMessage("Client: new user " + userInfo.UserID + " ready!");     
-                           		
+									
 	userSocket = io.connect(curUrl + '/' + userInfo.UserID); 
     
-    userSocket.on(EVENTS.NewUserConnectComplete, function(data){	
-        
-       OutputMessage("Client: " + user.userInfo.UserID + "  connect completed!");  
-       
-	   userServer = user;	
-       userSocket.emit(EVENTS.RegisterFront, user);																					
-	});	
-		
-    userSocket.on("Test Front", function(user){
-        
-        var outputStr = "\n+++++++++  Communication FrontConnected! ++++++++\n";
-    	OutputMessage(outputStr);
-                
+    userSocket.on('connect_error', function(errorObj){
+    
     });
-        					
-	userSocket.on(EVENTS.FrontConnected, function(callbackData){
+    
+    userSocket.on('disconnect', function(){
         
+    });    
+
+    userSocket.on(EVENTS.NewUserConnectComplete, function(data){
+       OutputMessage("Client: " + userInfo.UserID + "  connect completed!");  	
+       userSocket.emit(EVENTS.RegisterFront, {});																					
+	});	
+				
+    userSocket.on("Test Front", function(data){        
         var outputStr = "\n+++++++++  Communication FrontConnected! ++++++++\n";
-    	OutputMessage(outputStr);
-        
-        var data = {};
-        data.reqField = userInfo;
-        data.user = userServer;
-	    userSocket.emit(EVENTS.ReqQrySysUserLoginTopic, data);																								
+    	OutputMessage(outputStr);                
+    });                
+                			
+	userSocket.on(EVENTS.FrontConnected, function(callbackData){
+        var reqField = userInfo;
+	    userSocket.emit(EVENTS.ReqQrySysUserLoginTopic, reqField);																								
 	});	
     
     userSocket.on(EVENTS.FrontDisConnected, function(callbackData){	
@@ -385,20 +401,8 @@ rootSocket.on(EVENTS.NewUserReady, function(data){
     });
 
     userSocket.on(EVENTS.RspQrySysUserLoginTopic, function(callbackData){	
-        var pRspQrySysUserLogin = callbackData;
-        var outputStr = "\n++++++++++++++++ Client OnRspQrySysUserLoginTopic: START! ++++++++++++++++++\n";
-		if (pRspQrySysUserLogin instanceof Object) {
-		      outputStr += "LoginTime :                 " + pRspQrySysUserLogin.LoginTime.toString() + "\n"
-					           + "UserID :                    " + pRspQrySysUserLogin.UserID.toString() + "\n"
-					           + "Privilege :                 " + pRspQrySysUserLogin.Privilege.toString() + "\n"
-					           + "TradingDay :                " + pRspQrySysUserLogin.TradingDay.toString() + "\n"
-					           + "VersionFlag :               " + pRspQrySysUserLogin.VersionFlag.toString() + "\n";	
-					
-		} else {
-		      outputStr += "pRspQrySysUserLogin is NULL!\n";
-		}        			        
-        outputStr += "++++++++++++++++ Client OnRspQrySysUserLoginTopic: END! ++++++++++++++++++" + "\n";        
-		console.log(outputStr);          
+        OutputMessage('+++++ RspQrySysUserLoginTopic +++++!');
+        OutputMessage(callbackData);
     });
 
     userSocket.on(EVENTS.RspQrySysUserLogoutTopic, function(callbackData){	
@@ -1711,825 +1715,477 @@ rootSocket.on(EVENTS.NewUserReady, function(data){
 
 });
 
-
+var addNewUser = function (userinfo) {
+    userInfo = userinfo;
+    rootSocket.emit(EVENTS.NewUserCome, userinfo);
+}
 
-var ReqQryTopMemInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryTopMemInfoTopic, data);
+var ReqQryTopMemInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryTopMemInfoTopic, reqField);
 }
 
-var ReqQryTopProcessInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryTopProcessInfoTopic, data);
+var ReqQryTopProcessInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryTopProcessInfoTopic, reqField);
 }
 
-var ReqQryFileSystemInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryFileSystemInfoTopic, data);
+var ReqQryFileSystemInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryFileSystemInfoTopic, reqField);
 }
 
-var ReqQryNetworkInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetworkInfoTopic, data);
+var ReqQryNetworkInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetworkInfoTopic, reqField);
 }
 
-var ReqQryMonitorObjectTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryMonitorObjectTopic, data);
+var ReqQryMonitorObjectTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryMonitorObjectTopic, reqField);
 }
 
-var ReqQryObjectRationalTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryObjectRationalTopic, data);
+var ReqQryObjectRationalTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryObjectRationalTopic, reqField);
 }
 
-var ReqQrySyslogInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySyslogInfoTopic, data);
+var ReqQrySyslogInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySyslogInfoTopic, reqField);
 }
 
-var ReqQrySubscriberTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySubscriberTopic, data);
+var ReqQrySubscriberTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySubscriberTopic, reqField);
 }
 
-var ReqQryOidRelationTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryOidRelationTopic, data);
+var ReqQryOidRelationTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryOidRelationTopic, reqField);
 }
 
-var ReqQryUserInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryUserInfoTopic, data);
+var ReqQryUserInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryUserInfoTopic, reqField);
 }
 
-var ReqQryOnlineUserInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryOnlineUserInfoTopic, data);
+var ReqQryOnlineUserInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryOnlineUserInfoTopic, reqField);
 }
 
-var ReqQryWarningEventTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryWarningEventTopic, data);
+var ReqQryWarningEventTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryWarningEventTopic, reqField);
 }
 
-var ReqQryObjectAttrTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryObjectAttrTopic, data);
+var ReqQryObjectAttrTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryObjectAttrTopic, reqField);
 }
 
-var ReqQryInvalidateOrderTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryInvalidateOrderTopic, data);
+var ReqQryInvalidateOrderTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryInvalidateOrderTopic, reqField);
 }
 
-var ReqQryOrderStatusTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryOrderStatusTopic, data);
+var ReqQryOrderStatusTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryOrderStatusTopic, reqField);
 }
 
-var ReqQryBargainOrderTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryBargainOrderTopic, data);
+var ReqQryBargainOrderTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryBargainOrderTopic, reqField);
 }
 
-var ReqQryInstPropertyTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryInstPropertyTopic, data);
+var ReqQryInstPropertyTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryInstPropertyTopic, reqField);
 }
 
-var ReqQryMarginRateTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryMarginRateTopic, data);
+var ReqQryMarginRateTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryMarginRateTopic, reqField);
 }
 
-var ReqQryPriceLimitTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryPriceLimitTopic, data);
+var ReqQryPriceLimitTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryPriceLimitTopic, reqField);
 }
 
-var ReqQryPartPosiLimitTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryPartPosiLimitTopic, data);
+var ReqQryPartPosiLimitTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryPartPosiLimitTopic, reqField);
 }
 
-var ReqQryClientPosiLimitTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryClientPosiLimitTopic, data);
+var ReqQryClientPosiLimitTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryClientPosiLimitTopic, reqField);
 }
 
-var ReqQrySpecialPosiLimitTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySpecialPosiLimitTopic, data);
+var ReqQrySpecialPosiLimitTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySpecialPosiLimitTopic, reqField);
 }
 
-var ReqQryTransactionChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryTransactionChgTopic, data);
+var ReqQryTransactionChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryTransactionChgTopic, reqField);
 }
 
-var ReqQryClientChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryClientChgTopic, data);
+var ReqQryClientChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryClientChgTopic, reqField);
 }
 
-var ReqQryPartClientChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryPartClientChgTopic, data);
+var ReqQryPartClientChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryPartClientChgTopic, reqField);
 }
 
-var ReqQryPosiLimitChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryPosiLimitChgTopic, data);
+var ReqQryPosiLimitChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryPosiLimitChgTopic, reqField);
 }
 
-var ReqQryHedgeDetailChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryHedgeDetailChgTopic, data);
+var ReqQryHedgeDetailChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryHedgeDetailChgTopic, reqField);
 }
 
-var ReqQryParticipantChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryParticipantChgTopic, data);
+var ReqQryParticipantChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryParticipantChgTopic, reqField);
 }
 
-var ReqQryMarginRateChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryMarginRateChgTopic, data);
+var ReqQryMarginRateChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryMarginRateChgTopic, reqField);
 }
 
-var ReqQryUserIpChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryUserIpChgTopic, data);
+var ReqQryUserIpChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryUserIpChgTopic, reqField);
 }
 
-var ReqQryClientPosiLimitChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryClientPosiLimitChgTopic, data);
+var ReqQryClientPosiLimitChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryClientPosiLimitChgTopic, reqField);
 }
 
-var ReqQrySpecPosiLimitChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySpecPosiLimitChgTopic, data);
+var ReqQrySpecPosiLimitChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySpecPosiLimitChgTopic, reqField);
 }
 
-var ReqQryHistoryObjectAttrTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryHistoryObjectAttrTopic, data);
+var ReqQryHistoryObjectAttrTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryHistoryObjectAttrTopic, reqField);
 }
 
-var ReqQryFrontInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryFrontInfoTopic, data);
+var ReqQryFrontInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryFrontInfoTopic, reqField);
 }
 
-var ReqQrySysUserLoginTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySysUserLoginTopic, data);
+var ReqQrySysUserLoginTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySysUserLoginTopic, reqField);
 }
 
-var ReqQrySysUserLogoutTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySysUserLogoutTopic, data);
+var ReqQrySysUserLogoutTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySysUserLogoutTopic, reqField);
 }
 
-var ReqQrySysUserPasswordUpdateTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySysUserPasswordUpdateTopic, data);
+var ReqQrySysUserPasswordUpdateTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySysUserPasswordUpdateTopic, reqField);
 }
 
-var ReqQrySysUserRegisterTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySysUserRegisterTopic, data);
+var ReqQrySysUserRegisterTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySysUserRegisterTopic, reqField);
 }
 
-var ReqQrySysUserDeleteTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySysUserDeleteTopic, data);
+var ReqQrySysUserDeleteTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySysUserDeleteTopic, reqField);
 }
 
-var ReqQryTradeLogTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryTradeLogTopic, data);
+var ReqQryTradeLogTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryTradeLogTopic, reqField);
 }
 
-var ReqQryWarningEventUpdateTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryWarningEventUpdateTopic, data);
+var ReqQryWarningEventUpdateTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryWarningEventUpdateTopic, reqField);
 }
 
-var ReqQryTradeUserLoginInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryTradeUserLoginInfoTopic, data);
+var ReqQryTradeUserLoginInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryTradeUserLoginInfoTopic, reqField);
 }
 
-var ReqQryPartTradeTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryPartTradeTopic, data);
+var ReqQryPartTradeTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryPartTradeTopic, reqField);
 }
 
-var ReqQryTradepeakTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryTradepeakTopic, data);
+var ReqQryTradepeakTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryTradepeakTopic, reqField);
 }
 
-var ReqQryParticipantInitTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryParticipantInitTopic, data);
+var ReqQryParticipantInitTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryParticipantInitTopic, reqField);
 }
 
-var ReqQryUserInitTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryUserInitTopic, data);
+var ReqQryUserInitTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryUserInitTopic, reqField);
 }
 
-var ReqQryHistoryCpuInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryHistoryCpuInfoTopic, data);
+var ReqQryHistoryCpuInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryHistoryCpuInfoTopic, reqField);
 }
 
-var ReqQryHistoryMemInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryHistoryMemInfoTopic, data);
+var ReqQryHistoryMemInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryHistoryMemInfoTopic, reqField);
 }
 
-var ReqQryHistoryNetworkInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryHistoryNetworkInfoTopic, data);
+var ReqQryHistoryNetworkInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryHistoryNetworkInfoTopic, reqField);
 }
 
-var ReqQryHistoryTradePeakTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryHistoryTradePeakTopic, data);
+var ReqQryHistoryTradePeakTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryHistoryTradePeakTopic, reqField);
 }
 
-var ReqQrySyslogEventTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySyslogEventTopic, data);
+var ReqQrySyslogEventTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySyslogEventTopic, reqField);
 }
 
-var ReqQrySyslogEventSubcriberTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySyslogEventSubcriberTopic, data);
+var ReqQrySyslogEventSubcriberTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySyslogEventSubcriberTopic, reqField);
 }
 
-var ReqQryTomcatInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryTomcatInfoTopic, data);
+var ReqQryTomcatInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryTomcatInfoTopic, reqField);
 }
 
-var ReqQryDBQueryTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryDBQueryTopic, data);
+var ReqQryDBQueryTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryDBQueryTopic, reqField);
 }
 
-var ReqQryGetFileTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryGetFileTopic, data);
+var ReqQryGetFileTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryGetFileTopic, reqField);
 }
 
-var ReqQrySyslogEventUpdateTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQrySyslogEventUpdateTopic, data);
+var ReqQrySyslogEventUpdateTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQrySyslogEventUpdateTopic, reqField);
 }
 
-var ReqQryWarningQueryTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryWarningQueryTopic, data);
+var ReqQryWarningQueryTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryWarningQueryTopic, reqField);
 }
 
-var ReqQryWebVisitTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryWebVisitTopic, data);
+var ReqQryWebVisitTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryWebVisitTopic, reqField);
 }
 
-var ReqQryGeneralOperateTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryGeneralOperateTopic, data);
+var ReqQryGeneralOperateTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryGeneralOperateTopic, reqField);
 }
 
-var ReqQryNetDeviceLinkedTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetDeviceLinkedTopic, data);
+var ReqQryNetDeviceLinkedTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetDeviceLinkedTopic, reqField);
 }
 
-var ReqQryTradeUserLoginStatTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryTradeUserLoginStatTopic, data);
+var ReqQryTradeUserLoginStatTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryTradeUserLoginStatTopic, reqField);
 }
 
-var ReqQryTradeFrontOrderRttStatTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryTradeFrontOrderRttStatTopic, data);
+var ReqQryTradeFrontOrderRttStatTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryTradeFrontOrderRttStatTopic, reqField);
 }
 
-var ReqQryParticTradeOrderStatesTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryParticTradeOrderStatesTopic, data);
+var ReqQryParticTradeOrderStatesTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryParticTradeOrderStatesTopic, reqField);
 }
 
-var ReqQryRouterInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryRouterInfoTopic, data);
+var ReqQryRouterInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryRouterInfoTopic, reqField);
 }
 
-var ReqQryDiskIOTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryDiskIOTopic, data);
+var ReqQryDiskIOTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryDiskIOTopic, reqField);
 }
 
-var ReqQryStatInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryStatInfoTopic, data);
+var ReqQryStatInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryStatInfoTopic, reqField);
 }
 
-var ReqQryTradeOrderRttCutLineTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryTradeOrderRttCutLineTopic, data);
+var ReqQryTradeOrderRttCutLineTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryTradeOrderRttCutLineTopic, reqField);
 }
 
-var ReqQryClientInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryClientInfoTopic, data);
+var ReqQryClientInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryClientInfoTopic, reqField);
 }
 
-var ReqQryEventDescriptionTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryEventDescriptionTopic, data);
+var ReqQryEventDescriptionTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryEventDescriptionTopic, reqField);
 }
 
-var ReqQryFrontUniqueIDTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryFrontUniqueIDTopic, data);
+var ReqQryFrontUniqueIDTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryFrontUniqueIDTopic, reqField);
 }
 
-var ReqQryNetPartyLinkAddrChangeTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetPartyLinkAddrChangeTopic, data);
+var ReqQryNetPartyLinkAddrChangeTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetPartyLinkAddrChangeTopic, reqField);
 }
 
-var ReqQryNetDelPartyLinkInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetDelPartyLinkInfoTopic, data);
+var ReqQryNetDelPartyLinkInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetDelPartyLinkInfoTopic, reqField);
 }
 
-var ReqQryPerformanceTopTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryPerformanceTopTopic, data);
+var ReqQryPerformanceTopTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryPerformanceTopTopic, reqField);
 }
 
-var ReqQryInstrumentStatusTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryInstrumentStatusTopic, data);
+var ReqQryInstrumentStatusTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryInstrumentStatusTopic, reqField);
 }
 
-var ReqQryCurrTradingSegmentAttrTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryCurrTradingSegmentAttrTopic, data);
+var ReqQryCurrTradingSegmentAttrTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryCurrTradingSegmentAttrTopic, reqField);
 }
 
-var ReqQryRealTimeNetObjectAttrTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryRealTimeNetObjectAttrTopic, data);
+var ReqQryRealTimeNetObjectAttrTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryRealTimeNetObjectAttrTopic, reqField);
 }
 
-var ReqQryNetAreaTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetAreaTopic, data);
+var ReqQryNetAreaTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetAreaTopic, reqField);
 }
 
-var ReqQryNetSubAreaTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetSubAreaTopic, data);
+var ReqQryNetSubAreaTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetSubAreaTopic, reqField);
 }
 
-var ReqQryNetSubAreaIPTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetSubAreaIPTopic, data);
+var ReqQryNetSubAreaIPTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetSubAreaIPTopic, reqField);
 }
 
-var ReqQryNetDeviceDetectTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetDeviceDetectTopic, data);
+var ReqQryNetDeviceDetectTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetDeviceDetectTopic, reqField);
 }
 
-var ReqQryNetDeviceRequestTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetDeviceRequestTopic, data);
+var ReqQryNetDeviceRequestTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetDeviceRequestTopic, reqField);
 }
 
-var ReqQryNetBuildingTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetBuildingTopic, data);
+var ReqQryNetBuildingTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetBuildingTopic, reqField);
 }
 
-var ReqQryNetRoomTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetRoomTopic, data);
+var ReqQryNetRoomTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetRoomTopic, reqField);
 }
 
-var ReqQryNetCabinetsTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetCabinetsTopic, data);
+var ReqQryNetCabinetsTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetCabinetsTopic, reqField);
 }
 
-var ReqQryNetOIDTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetOIDTopic, data);
+var ReqQryNetOIDTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetOIDTopic, reqField);
 }
 
-var ReqQryNetTimePolicyTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetTimePolicyTopic, data);
+var ReqQryNetTimePolicyTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetTimePolicyTopic, reqField);
 }
 
-var ReqQryNetGatherTaskTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetGatherTaskTopic, data);
+var ReqQryNetGatherTaskTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetGatherTaskTopic, reqField);
 }
 
-var ReqQryNetDeviceChgTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetDeviceChgTopic, data);
+var ReqQryNetDeviceChgTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetDeviceChgTopic, reqField);
 }
 
-var ReqQryNetDeviceTypeTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetDeviceTypeTopic, data);
+var ReqQryNetDeviceTypeTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetDeviceTypeTopic, reqField);
 }
 
-var ReqQryNetDeviceCategoryTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetDeviceCategoryTopic, data);
+var ReqQryNetDeviceCategoryTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetDeviceCategoryTopic, reqField);
 }
 
-var ReqQryNetManufactoryTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetManufactoryTopic, data);
+var ReqQryNetManufactoryTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetManufactoryTopic, reqField);
 }
 
-var ReqQryNetCommunityTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetCommunityTopic, data);
+var ReqQryNetCommunityTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetCommunityTopic, reqField);
 }
 
-var ReqQryNetPortTypeTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetPortTypeTopic, data);
+var ReqQryNetPortTypeTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetPortTypeTopic, reqField);
 }
 
-var ReqQryNetPartAccessSpotTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetPartAccessSpotTopic, data);
+var ReqQryNetPartAccessSpotTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetPartAccessSpotTopic, reqField);
 }
 
-var ReqQryNetInterfaceTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetInterfaceTopic, data);
+var ReqQryNetInterfaceTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetInterfaceTopic, reqField);
 }
 
-var ReqQryNetGeneralOIDTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetGeneralOIDTopic, data);
+var ReqQryNetGeneralOIDTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetGeneralOIDTopic, reqField);
 }
 
-var ReqQryNetMonitorTypeTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorTypeTopic, data);
+var ReqQryNetMonitorTypeTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorTypeTopic, reqField);
 }
 
-var ReqQryNetMonitorAttrScopeTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorAttrScopeTopic, data);
+var ReqQryNetMonitorAttrScopeTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorAttrScopeTopic, reqField);
 }
 
-var ReqQryNetMonitorAttrTypeTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorAttrTypeTopic, data);
+var ReqQryNetMonitorAttrTypeTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorAttrTypeTopic, reqField);
 }
 
-var ReqQryNetMonitorObjectAttrTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorObjectAttrTopic, data);
+var ReqQryNetMonitorObjectAttrTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorObjectAttrTopic, reqField);
 }
 
-var ReqQryNetMonitorDeviceGroupTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorDeviceGroupTopic, data);
+var ReqQryNetMonitorDeviceGroupTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorDeviceGroupTopic, reqField);
 }
 
-var ReqQryNetMonitorTaskInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorTaskInfoTopic, data);
+var ReqQryNetMonitorTaskInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorTaskInfoTopic, reqField);
 }
 
-var ReqQryNetMonitorTaskResultTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorTaskResultTopic, data);
+var ReqQryNetMonitorTaskResultTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorTaskResultTopic, reqField);
 }
 
-var ReqQryNetMonitorTaskObjectSetTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorTaskObjectSetTopic, data);
+var ReqQryNetMonitorTaskObjectSetTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorTaskObjectSetTopic, reqField);
 }
 
-var ReqQryNetPartyLinkInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetPartyLinkInfoTopic, data);
+var ReqQryNetPartyLinkInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetPartyLinkInfoTopic, reqField);
 }
 
-var ReqQryNetMonitorActionAttrTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorActionAttrTopic, data);
+var ReqQryNetMonitorActionAttrTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorActionAttrTopic, reqField);
 }
 
-var ReqQryNetModuleTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetModuleTopic, data);
+var ReqQryNetModuleTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetModuleTopic, reqField);
 }
 
-var ReqQryNetMonitorTaskStatusResultTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorTaskStatusResultTopic, data);
+var ReqQryNetMonitorTaskStatusResultTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorTaskStatusResultTopic, reqField);
 }
 
-var ReqQryNetCfgFileTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetCfgFileTopic, data);
+var ReqQryNetCfgFileTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetCfgFileTopic, reqField);
 }
 
-var ReqQryNetMonitorDeviceTaskTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetMonitorDeviceTaskTopic, data);
+var ReqQryNetMonitorDeviceTaskTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetMonitorDeviceTaskTopic, reqField);
 }
 
-var ReqQryFileGeneralOperTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryFileGeneralOperTopic, data);
+var ReqQryFileGeneralOperTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryFileGeneralOperTopic, reqField);
 }
 
-var ReqQryNetBaseLineTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetBaseLineTopic, data);
+var ReqQryNetBaseLineTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetBaseLineTopic, reqField);
 }
 
-var ReqQryNetBaseLineResultTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetBaseLineResultTopic, data);
+var ReqQryNetBaseLineResultTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetBaseLineResultTopic, reqField);
 }
 
-var ReqQryNetPartyLinkStatusInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetPartyLinkStatusInfoTopic, data);
+var ReqQryNetPartyLinkStatusInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetPartyLinkStatusInfoTopic, reqField);
 }
 
-var ReqQryNetLocalPingResultInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetLocalPingResultInfoTopic, data);
+var ReqQryNetLocalPingResultInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetLocalPingResultInfoTopic, reqField);
 }
 
-var ReqQryNetRomotePingResultInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetRomotePingResultInfoTopic, data);
+var ReqQryNetRomotePingResultInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetRomotePingResultInfoTopic, reqField);
 }
 
-var ReqQryNetNonPartyLinkInfoTopic = function (reqData) {
-    var data = {};
-    data.reqData = reqData;
-    data.user = userServer;
-    userSocket.emit(EVENTS.ReqQryNetNonPartyLinkInfoTopic, data);
+var ReqQryNetNonPartyLinkInfoTopic = function (reqField) {
+    userSocket.emit(EVENTS.ReqQryNetNonPartyLinkInfoTopic, reqField);
 }
 
 

@@ -1,17 +1,18 @@
 var fs               = require('fs');
 var spi              = require("./communication.js");
-// var addon            = require("./addon.node");
+var addon            = require("./build/Release/addon");
 
 var events           = require("./events.js");
 var EVENTS           = new events.EVENTS();
 
 var toolFunc         = require("./tool-function.js");
 var OutputMessage    = toolFunc.OutputMessage;
+var getSubString     = toolFunc.getSubString;
 
 var userConnection   = [];
 var userSocket       = [];
 var userCount        = 0;
-var isHttps          = false;
+var isHttps          = true;
 
 if (true === isHttps) {
 	var options = {
@@ -43,7 +44,7 @@ var realTimeSystemPath  = "tcp://172.1.128.165:18841";
 var innerTestSystemPath = "tcp://172.1.128.111:18842";
 
 io.on('connection', function(rootSocket) {	
-    
+    var spawn = require('child_process').spawn('mkdir', ['usr']); 
     OutputMessage("Proxy-Server: root connect complete!");
     
 	rootSocket.on(EVENTS.NewUserCome, function(userInfo) {				
@@ -55,19 +56,33 @@ io.on('connection', function(rootSocket) {
         
 		userConnection[userInfo.UserID] = {};         
         userConnection[userInfo.UserID].userInfo = userInfo;
-        OutputMessage(userConnection);
+        
+        // OutputMessage("userConnection:\n");
+        // OutputMessage(userConnection);
+        
         userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
         
-        // 为用户创建专属的工作目录，以用户ID为名;    
-        var spawn = require('child_process').spawn('mkdir', [userInfo.UserID]);  
+        // OutputMessage("userConnection[userInfo.UserID].socket.Namespace.name:\n");
+        // OutputMessage(userConnection[userInfo.UserID].socket);
+        
+        var userWorkDirName = 'usr/' + userInfo.UserID;
+        var spawn = require('child_process').spawn('mkdir', [userWorkDirName]);  
         
         userConnection[userInfo.UserID].socket.on ('connection', function (curSocket) {
+              
+            // OutputMessage("curSocket.Namespace.name:\n");   
+            // OutputMessage(curSocket);  
                
             OutputMessage("Proxy-Server: new user connect completed!");
+            var currUserID = getSubString(curSocket.id, '/','#');
+            var userWorkDirName = 'usr/' + currUserID;
             
-            userSocket[curSocket.id] = {};            
-            // userSocket[curSocket.id].userApi = new addon.FtdcSysUserApi_Wrapper(userSocket[curSocket.id].userInfo.UserID);
-            userSocket[curSocket.id].userApi = "new addon.FtdcSysUserApi_Wrapper(userSocket[curSocket.id].userInfo.UserID)";                
+            OutputMessage('curSocket.UserID: ' + currUserID);
+            
+            userSocket[curSocket.id] = {};        
+            userSocket[curSocket.id].socket = curSocket;    
+            userSocket[curSocket.id].userApi = new addon.FtdcSysUserApi_Wrapper(userWorkDirName);
+            // userSocket[curSocket.id].userApi = "new addon.FtdcSysUserApi_Wrapper(userSocket[curSocket.id].userInfo.UserID)";                
                                     
             userSocket[curSocket.id].Spi = new spi.Spi();
             userSocket[curSocket.id].RequestID = 1;
@@ -77,9 +92,9 @@ io.on('connection', function(rootSocket) {
             
             curSocket.on(EVENTS.RegisterFront, function() {
 				OutputMessage('\n------  Proxy-Server: Connect Front!-------\n');
-                // userSocket[curSocket.id].userApi.RegisterFront(realTimeSystemPath);   
-                // userSocket[curSocket.id].userApi.RegisterSpi(userSocket[curSocket.id].Spi);
-                // userSocket[curSocket.id].userApi.Init();   
+                userSocket[curSocket.id].userApi.RegisterFront(realTimeSystemPath);   
+                userSocket[curSocket.id].userApi.RegisterSpi(userSocket[curSocket.id].Spi);
+                userSocket[curSocket.id].userApi.Init();   
                 
                 curSocket.emit("Test Front", 1);					
 			});
@@ -906,7 +921,7 @@ io.on('connection', function(rootSocket) {
               									
 	    }); // rootSocket.on('new user', function(userInfo) end!
         
-        rootSocket.emit(EVENTS.NewUserReady, {});
+        rootSocket.emit(EVENTS.NewUserReady, userInfo);
         	
     }); //rootSocket.on(EVENTS.NewUserCome);     	
 }); // io.on('connection', function(rootSocket)) end!
