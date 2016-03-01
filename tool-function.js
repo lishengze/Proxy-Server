@@ -1,5 +1,6 @@
 function OutputMessage (data) {
     console.log(data);
+    // alert(data);
 }
 
 function getSubString(originData, startCharValue, endCharValue) {

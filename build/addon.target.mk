@@ -27,14 +27,13 @@ CFLAGS_C_Debug :=
 # Flags passed to only C++ files.
 CFLAGS_CC_Debug := \
 	-fno-rtti \
-	-fno-exceptions \
-	-std=gnu++0x
+	-fno-exceptions
 
 INCS_Debug := \
-	-I/root/.node-gyp/4.2.4/include/node \
-	-I/root/.node-gyp/4.2.4/src \
-	-I/root/.node-gyp/4.2.4/deps/uv/include \
-	-I/root/.node-gyp/4.2.4/deps/v8/include \
+	-I/home/yyc/.node-gyp/0.12.7/include/node \
+	-I/home/yyc/.node-gyp/0.12.7/src \
+	-I/home/yyc/.node-gyp/0.12.7/deps/uv/include \
+	-I/home/yyc/.node-gyp/0.12.7/deps/v8/include \
 	-I$(srcdir)/node_modules/nan \
 	-I$(srcdir)/.
 
@@ -55,6 +54,7 @@ CFLAGS_Release := \
 	-O3 \
 	-ffunction-sections \
 	-fdata-sections \
+	-fno-tree-vrp \
 	-fno-omit-frame-pointer
 
 # Flags passed to only C files.
@@ -63,14 +63,13 @@ CFLAGS_C_Release :=
 # Flags passed to only C++ files.
 CFLAGS_CC_Release := \
 	-fno-rtti \
-	-fno-exceptions \
-	-std=gnu++0x
+	-fno-exceptions
 
 INCS_Release := \
-	-I/root/.node-gyp/4.2.4/include/node \
-	-I/root/.node-gyp/4.2.4/src \
-	-I/root/.node-gyp/4.2.4/deps/uv/include \
-	-I/root/.node-gyp/4.2.4/deps/v8/include \
+	-I/home/yyc/.node-gyp/0.12.7/include/node \
+	-I/home/yyc/.node-gyp/0.12.7/src \
+	-I/home/yyc/.node-gyp/0.12.7/deps/uv/include \
+	-I/home/yyc/.node-gyp/0.12.7/deps/v8/include \
 	-I$(srcdir)/node_modules/nan \
 	-I$(srcdir)/.
 

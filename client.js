@@ -2,16 +2,18 @@
 
 var EVENTS           = new events();
 var isHttps          = true;
+
 if (true === isHttps) {
 	var localUrl   = 'https://localhost'
-//	var serverUrl  = 'https://172.1.128.169';
+	var serverUrl  = 'https://172.1.128.169'
 	var port       = 8000;
-	var curUrl     = localUrl + ':' + port.toString();
+	var curUrl     = serverUrl + ':' + port.toString();
 	var rootSocket = io.connect(curUrl,{secure:true});	
 } else {
 	var localUrl         = 'http://localhost';
     var serverUrl        = 'http://172.1.128.169';
-    var curUrl           = localUrl;
+    var ubuntuUrl        = 'http://192.168.136.131';
+    var curUrl           = ubuntuUrl;
 	var rootSocket       = io.connect(curUrl);
 }
 
@@ -401,8 +403,22 @@ rootSocket.on(EVENTS.NewUserReady, function(curUserInfo){
     });
 
     userSocket.on(EVENTS.RspQrySysUserLoginTopic, function(callbackData){	
-        OutputMessage('+++++ RspQrySysUserLoginTopic +++++!');
-        OutputMessage(callbackData);
+        var outputStr = '+++++ RspQrySysUserLoginTopic +++++!\n';
+        var pRspQrySysUserLogin = callbackData.pRspQrySysUserLogin;
+        outputStr += "\n++ Client OnRspQrySysUserLoginTopic: START! ++\n";
+		if (pRspQrySysUserLogin instanceof Object) {
+		      outputStr += "LoginTime :                 " + pRspQrySysUserLogin.LoginTime.toString() + "\n"
+					           + "UserID :                    " + pRspQrySysUserLogin.UserID.toString() + "\n"
+					           + "Privilege :                 " + pRspQrySysUserLogin.Privilege.toString() + "\n"
+					           + "TradingDay :                " + pRspQrySysUserLogin.TradingDay.toString() + "\n"
+					           + "VersionFlag :               " + pRspQrySysUserLogin.VersionFlag.toString() + "\n";	
+					
+				} else {
+		            outputStr += "pRspQrySysUserLogin is NULL!\n";
+		}        	
+
+		outputStr += "++ Client OnRspQrySysUserLoginTopic: END! ++" + "\n";        
+		OutputMessage(outputStr);                    
     });
 
     userSocket.on(EVENTS.RspQrySysUserLogoutTopic, function(callbackData){	

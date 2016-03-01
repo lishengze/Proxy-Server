@@ -16,8 +16,8 @@ var isHttps          = true;
 
 if (true === isHttps) {
 	var options = {
-		key:  fs.readFileSync("9249652-www.sfit.shfe.com.cn.key"),
-		cert: fs.readFileSync("9249652-www.sfit.shfe.com.cn.cert"),
+		key:  fs.readFileSync("sfit.key"),
+		cert: fs.readFileSync("sfit.cert"),
 	};
 	var app  = require('https').createServer(options,onRequest); 
 	var io   = require('socket.io')(app)
@@ -47,6 +47,10 @@ io.on('connection', function(rootSocket) {
     var spawn = require('child_process').spawn('mkdir', ['usr']); 
     OutputMessage("Proxy-Server: root connect complete!");
     
+    rootSocket.on('disconnect', function(data) {
+		console.log('rootSocket disconnect!');
+	});
+    
 	rootSocket.on(EVENTS.NewUserCome, function(userInfo) {				
         if (undefined !== userConnection[userInfo.UserID]) {
             OutputMessage("Proxy-Server: " + userInfo.UserID + " has already logged!");
@@ -72,10 +76,16 @@ io.on('connection', function(rootSocket) {
               
             // OutputMessage("curSocket.Namespace.name:\n");   
             // OutputMessage(curSocket);  
-               
+            curSocket.on('disconnect', function(data) {
+              var currUserID = getSubString(curSocket.id, '/','#');
+              userConnection[currUserID] = undefined;
+              userSocket[curSocket.id] = {}; 
+		      console.log(curSocket.id + ' disconnect!');
+	        });
+            
             OutputMessage("Proxy-Server: new user connect completed!");
             var currUserID = getSubString(curSocket.id, '/','#');
-            var userWorkDirName = 'usr/' + currUserID;
+            var userWorkDirName = 'usr/' + currUserID + '/';
             
             OutputMessage('curSocket.UserID: ' + currUserID);
             

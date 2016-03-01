@@ -1,25 +1,26 @@
-cmd_Release/obj.target/addon/addon.o := g++ '-DNODE_GYP_MODULE_NAME=addon' '-D_LARGEFILE_SOURCE' '-D_FILE_OFFSET_BITS=64' '-DBUILDING_NODE_EXTENSION' -I/root/.node-gyp/4.2.4/include/node -I/root/.node-gyp/4.2.4/src -I/root/.node-gyp/4.2.4/deps/uv/include -I/root/.node-gyp/4.2.4/deps/v8/include -I../node_modules/nan -I../.  -fPIC -pthread -Wall -Wextra -Wno-unused-parameter -m64 -O3 -ffunction-sections -fdata-sections -fno-omit-frame-pointer -fno-rtti -fno-exceptions -std=gnu++0x -MMD -MF ./Release/.deps/Release/obj.target/addon/addon.o.d.raw   -c -o Release/obj.target/addon/addon.o ../addon.cpp
+cmd_Release/obj.target/addon/addon.o := g++ '-DNODE_GYP_MODULE_NAME=addon' '-D_LARGEFILE_SOURCE' '-D_FILE_OFFSET_BITS=64' '-DBUILDING_NODE_EXTENSION' -I/home/yyc/.node-gyp/0.12.7/include/node -I/home/yyc/.node-gyp/0.12.7/src -I/home/yyc/.node-gyp/0.12.7/deps/uv/include -I/home/yyc/.node-gyp/0.12.7/deps/v8/include -I../node_modules/nan -I../.  -fPIC -pthread -Wall -Wextra -Wno-unused-parameter -m64 -O3 -ffunction-sections -fdata-sections -fno-tree-vrp -fno-omit-frame-pointer -fno-rtti -fno-exceptions -MMD -MF ./Release/.deps/Release/obj.target/addon/addon.o.d.raw   -c -o Release/obj.target/addon/addon.o ../addon.cpp
 Release/obj.target/addon/addon.o: ../addon.cpp ../node_modules/nan/nan.h \
- /root/.node-gyp/4.2.4/include/node/node_version.h \
- /root/.node-gyp/4.2.4/include/node/uv.h \
- /root/.node-gyp/4.2.4/include/node/uv-errno.h \
- /root/.node-gyp/4.2.4/include/node/uv-version.h \
- /root/.node-gyp/4.2.4/include/node/uv-unix.h \
- /root/.node-gyp/4.2.4/include/node/uv-threadpool.h \
- /root/.node-gyp/4.2.4/include/node/uv-linux.h \
- /root/.node-gyp/4.2.4/include/node/node.h \
- /root/.node-gyp/4.2.4/include/node/v8.h \
- /root/.node-gyp/4.2.4/include/node/v8-version.h \
- /root/.node-gyp/4.2.4/include/node/v8config.h \
- /root/.node-gyp/4.2.4/include/node/node_version.h \
- /root/.node-gyp/4.2.4/include/node/node_buffer.h \
- /root/.node-gyp/4.2.4/include/node/node.h \
- /root/.node-gyp/4.2.4/include/node/node_object_wrap.h \
+ /home/yyc/.node-gyp/0.12.7/src/node_version.h \
+ /home/yyc/.node-gyp/0.12.7/deps/uv/include/uv.h \
+ /home/yyc/.node-gyp/0.12.7/deps/uv/include/uv-errno.h \
+ /home/yyc/.node-gyp/0.12.7/deps/uv/include/uv-version.h \
+ /home/yyc/.node-gyp/0.12.7/deps/uv/include/uv-unix.h \
+ /home/yyc/.node-gyp/0.12.7/deps/uv/include/uv-threadpool.h \
+ /home/yyc/.node-gyp/0.12.7/deps/uv/include/uv-linux.h \
+ /home/yyc/.node-gyp/0.12.7/src/node.h \
+ /home/yyc/.node-gyp/0.12.7/deps/v8/include/v8.h \
+ /home/yyc/.node-gyp/0.12.7/deps/v8/include/v8stdint.h \
+ /home/yyc/.node-gyp/0.12.7/deps/v8/include/v8config.h \
+ /home/yyc/.node-gyp/0.12.7/src/node_version.h \
+ /home/yyc/.node-gyp/0.12.7/src/node_buffer.h \
+ /home/yyc/.node-gyp/0.12.7/src/node.h \
+ /home/yyc/.node-gyp/0.12.7/src/smalloc.h \
+ /home/yyc/.node-gyp/0.12.7/src/node_object_wrap.h \
  ../node_modules/nan/nan_callbacks.h \
  ../node_modules/nan/nan_callbacks_12_inl.h \
- ../node_modules/nan/nan_maybe_43_inl.h \
+ ../node_modules/nan/nan_maybe_pre_43_inl.h \
  ../node_modules/nan/nan_converters.h \
- ../node_modules/nan/nan_converters_43_inl.h \
+ ../node_modules/nan/nan_converters_pre_43_inl.h \
  ../node_modules/nan/nan_new.h \
  ../node_modules/nan/nan_implementation_12_inl.h \
  ../node_modules/nan/nan_persistent_12_inl.h \
@@ -30,26 +31,27 @@ Release/obj.target/addon/addon.o: ../addon.cpp ../node_modules/nan/nan.h \
  ../tool-function.h ../id-func.h ../v8-transform-data.h
 ../addon.cpp:
 ../node_modules/nan/nan.h:
-/root/.node-gyp/4.2.4/include/node/node_version.h:
-/root/.node-gyp/4.2.4/include/node/uv.h:
-/root/.node-gyp/4.2.4/include/node/uv-errno.h:
-/root/.node-gyp/4.2.4/include/node/uv-version.h:
-/root/.node-gyp/4.2.4/include/node/uv-unix.h:
-/root/.node-gyp/4.2.4/include/node/uv-threadpool.h:
-/root/.node-gyp/4.2.4/include/node/uv-linux.h:
-/root/.node-gyp/4.2.4/include/node/node.h:
-/root/.node-gyp/4.2.4/include/node/v8.h:
-/root/.node-gyp/4.2.4/include/node/v8-version.h:
-/root/.node-gyp/4.2.4/include/node/v8config.h:
-/root/.node-gyp/4.2.4/include/node/node_version.h:
-/root/.node-gyp/4.2.4/include/node/node_buffer.h:
-/root/.node-gyp/4.2.4/include/node/node.h:
-/root/.node-gyp/4.2.4/include/node/node_object_wrap.h:
+/home/yyc/.node-gyp/0.12.7/src/node_version.h:
+/home/yyc/.node-gyp/0.12.7/deps/uv/include/uv.h:
+/home/yyc/.node-gyp/0.12.7/deps/uv/include/uv-errno.h:
+/home/yyc/.node-gyp/0.12.7/deps/uv/include/uv-version.h:
+/home/yyc/.node-gyp/0.12.7/deps/uv/include/uv-unix.h:
+/home/yyc/.node-gyp/0.12.7/deps/uv/include/uv-threadpool.h:
+/home/yyc/.node-gyp/0.12.7/deps/uv/include/uv-linux.h:
+/home/yyc/.node-gyp/0.12.7/src/node.h:
+/home/yyc/.node-gyp/0.12.7/deps/v8/include/v8.h:
+/home/yyc/.node-gyp/0.12.7/deps/v8/include/v8stdint.h:
+/home/yyc/.node-gyp/0.12.7/deps/v8/include/v8config.h:
+/home/yyc/.node-gyp/0.12.7/src/node_version.h:
+/home/yyc/.node-gyp/0.12.7/src/node_buffer.h:
+/home/yyc/.node-gyp/0.12.7/src/node.h:
+/home/yyc/.node-gyp/0.12.7/src/smalloc.h:
+/home/yyc/.node-gyp/0.12.7/src/node_object_wrap.h:
 ../node_modules/nan/nan_callbacks.h:
 ../node_modules/nan/nan_callbacks_12_inl.h:
-../node_modules/nan/nan_maybe_43_inl.h:
+../node_modules/nan/nan_maybe_pre_43_inl.h:
 ../node_modules/nan/nan_converters.h:
-../node_modules/nan/nan_converters_43_inl.h:
+../node_modules/nan/nan_converters_pre_43_inl.h:
 ../node_modules/nan/nan_new.h:
 ../node_modules/nan/nan_implementation_12_inl.h:
 ../node_modules/nan/nan_persistent_12_inl.h:
