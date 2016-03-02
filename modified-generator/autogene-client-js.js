@@ -8,20 +8,21 @@ function hereDoc(f) {
 var fileData = hereDoc(function () {
 /*// Created by li.shengze on 2016/2/24.
 
-var EVENTS           = new events();
-var isHttps          = false;
+var EVENTS  = new events();
+var isHttps = false;
+
 if (true === isHttps) {
-//	var ipAddress  = 'https://192.168.10.11';
-	var ipAddress  = 'https://localhost'
-//	var ipAddress  = 'https://172.1.128.169';
+	var localUrl   = 'https://localhost'
+	var serverUrl  = 'https://172.1.128.169'
 	var port       = 8000;
-	var url        = ipAddress + ':' + port.toString();
-	var rootSocket = io.connect(url,{secure:true});	
+	var curUrl     = serverUrl + ':' + port.toString();
+	var rootSocket = io.connect(curUrl,{secure:true});	
 } else {
-	var localUrl         = 'http://localhost';
-    var serverUrl        = 'http://172.1.128.169';
-    var curUrl           = localUrl;
-	var rootSocket       = io.connect(curUrl);
+	var localUrl   = 'http://localhost';
+    var serverUrl  = 'http://172.1.128.169';
+    var ubuntuUrl  = 'http://192.168.136.131';
+    var curUrl     = localUrl;
+	var rootSocket = io.connect(curUrl);
 }
 
 var userSocket;
@@ -47,6 +48,16 @@ var TestAddNewUser = function () {
     userinfo.UserID    = "admin";
     userinfo.Password  = "admin";
     userinfo.VersionID = "2.0.0.0";  
+    
+    addNewUser(userinfo);  
+}
+
+var TestAddNewUserID_1 = function () {
+    var userinfo = {};
+    userinfo           = new CShfeFtdcReqQrySysUserLoginField();
+    userinfo.UserID    = "NewUserID_1";
+    userinfo.Password  = "1234567";
+    userinfo.VersionID = "2.0.0.0";      
     
     addNewUser(userinfo);  
 }

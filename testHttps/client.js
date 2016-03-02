@@ -1,4 +1,5 @@
-var isHttps        = true;
+var isHttps        = false;
+
 
 if (true === isHttps) {
 	var localUrl   = 'https://localhost:8000'
@@ -12,14 +13,31 @@ if (true === isHttps) {
 	var rootSocket = io.connect(curUrl);
 }
 
+console.log("client rootsocket: \n");
+console.log(rootSocket);
+
 rootSocket.on("connection complete", function(data){
 	if (true === isHttps) {
 		console.log("https connection complete!");
 	} else {
 		console.log("http connection complete!");
 	}
+	
+	var userName = "lee";
+	
+	rootSocket.emit('new user', userName);
+	
+	rootSocket.on('new user done', function(data) {
+		
+		var usersocket = io.connect(curUrl + '/' + userName);
+		console.log("client usersocket: \n");
+		console.log(usersocket);
+		
+	});
+	
 });
 
+// 连接断裂,定时重连.
 rootSocket.on('disconnect', function(data) {
-		console.log('rootSocket disconnect!');
+	console.log('rootSocket disconnect!');
 });

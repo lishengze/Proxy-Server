@@ -1,10 +1,10 @@
 var fs = require('fs');
-var isHttps = true;
+var isHttps = false;
 
 if (true === isHttps) {
 	var options = {
 		key:  fs.readFileSync("sfit.key"),
-		cert: fs.readFileSync("sfit.cert")
+		cert: fs.readFileSync("sfit.cert"),
 	};
 	var app  = require('https').createServer(options,onRequest); 
 	var io   = require('socket.io')(app)
@@ -19,6 +19,9 @@ if (true === isHttps) {
 
 io.on('connection', function(rootSocket) {
 	
+	// console.log("server rootsocket: \n");
+	// console.log(rootSocket);
+	
 	if (true === isHttps) {
 		console.log("https connection complete!");
 	} else {
@@ -26,6 +29,21 @@ io.on('connection', function(rootSocket) {
 	}
 		
 	rootSocket.emit("connection complete", {});
+	
+	// rootSocket.on('new user', function (userName){
+	// 	var usernamespace = io.of('/' + userName);
+		
+	// 	rootSocket.emit('new user done', {});
+		
+	// 	usernamespace.on('connection', function(usersocket){
+	// 		console.log('server usersocket: \n');
+	// 		console.log(usersocket);
+			
+	// 		console.log('server usernamespace: \n');
+	// 		console.log(usernamespace);			
+						
+	// 	});			
+	// });
 	
 	rootSocket.on('disconnect', function(data) {
 		console.log('rootSocket disconnect!');

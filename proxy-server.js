@@ -1,6 +1,7 @@
 var fs               = require('fs');
 var spi              = require("./communication.js");
-var addon            = require("./build/Release/addon");
+// var addon            = require("./build/Release/addon");
+var addon            = require("./addon");
 
 var events           = require("./events.js");
 var EVENTS           = new events.EVENTS();
@@ -66,12 +67,9 @@ io.on('connection', function(rootSocket) {
         
         userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
         
-        // OutputMessage("userConnection[userInfo.UserID].socket.Namespace.name:\n");
-        // OutputMessage(userConnection[userInfo.UserID].socket);
-        
         var userWorkDirName = 'usr/' + userInfo.UserID;
         var spawn = require('child_process').spawn('mkdir', [userWorkDirName]);  
-        
+               
         userConnection[userInfo.UserID].socket.on ('connection', function (curSocket) {
               
             // OutputMessage("curSocket.Namespace.name:\n");   
@@ -83,20 +81,16 @@ io.on('connection', function(rootSocket) {
 		      console.log(curSocket.id + ' disconnect!');
 	        });
             
-            OutputMessage("Proxy-Server: new user connect completed!");
             var currUserID = getSubString(curSocket.id, '/','#');
             var userWorkDirName = 'usr/' + currUserID + '/';
+            OutputMessage("Proxy-Server: new user " + currUserID + "connect completed!");
             
-            OutputMessage('curSocket.UserID: ' + currUserID);
-            
-            userSocket[curSocket.id] = {};        
-            userSocket[curSocket.id].socket = curSocket;    
-            userSocket[curSocket.id].userApi = new addon.FtdcSysUserApi_Wrapper(userWorkDirName);
-            // userSocket[curSocket.id].userApi = "new addon.FtdcSysUserApi_Wrapper(userSocket[curSocket.id].userInfo.UserID)";                
-                                    
-            userSocket[curSocket.id].Spi = new spi.Spi();
+            userSocket[curSocket.id]           = {};        
+            userSocket[curSocket.id].socket    = curSocket;                
+            userSocket[curSocket.id].userApi   = new addon.FtdcSysUserApi_Wrapper(userWorkDirName);          
+            userSocket[curSocket.id].Spi       = new spi.Spi();
             userSocket[curSocket.id].RequestID = 1;
-            userSocket[curSocket.id].Spi.user = userSocket[curSocket.id];
+            userSocket[curSocket.id].Spi.user  = userSocket[curSocket.id];
                        
             curSocket.emit(EVENTS.NewUserConnectComplete, {});
             

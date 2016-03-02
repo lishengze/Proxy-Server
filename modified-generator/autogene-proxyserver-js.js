@@ -53,22 +53,37 @@ var innerTestSystemPath = "tcp://172.1.128.111:18842";
 io.on('connection', function(rootSocket) {	
 
 	rootSocket.on(EVENTS.NewUserCome, function(userInfo) {				
-        if (undefined === userConnection[userInfo.UserID]) {
+        if (undefined !== userConnection[userInfo.UserID]) {
             
         } 
         
 		userConnection[userInfo.UserID] = {};         
         userConnection[userInfo.UserID].userInfo = userInfo;
         userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
-        
+                
+        var userWorkDirName = 'usr/' + userInfo.UserID;
+        var spawn = require('child_process').spawn('mkdir', [userWorkDirName]);                  
+                
         userConnection[userInfo.UserID].socket .on ('connection', function (curSocket) {
                             
-            // 为用户创建专属的工作目录，以用户ID为名;    
-            var spawn = require('child_process').spawn('mkdir', [user[curUserIndex].userInfo.UserID]);                            
-            user[curUserIndex].userApi = new addon.FtdcSysUserApi_Wrapper(user[curUserIndex].userInfo.UserID);          
-            userSocket[curSocket.id].Spi = new spi.Spi();
+            urSocket.on('disconnect', function(data) {
+              var currUserID = getSubString(curSocket.id, '/','#');
+              userConnection[currUserID] = undefined;
+              userSocket[curSocket.id] = {}; 
+		      console.log(curSocket.id + ' disconnect!');
+	        });
+                           
+            var currUserID = getSubString(curSocket.id, '/','#');
+            var userWorkDirName = 'usr/' + currUserID + '/';
+            
+            OutputMessage("Proxy-Server: new user " + currUserID + " connect completed!");
+            
+            userSocket[curSocket.id]           = {};        
+            userSocket[curSocket.id].socket    = curSocket;                
+            userSocket[curSocket.id].userApi   = new addon.FtdcSysUserApi_Wrapper(userWorkDirName);          
+            userSocket[curSocket.id].Spi       = new spi.Spi();
             userSocket[curSocket.id].RequestID = 1;
-            userSocket[curSocket.id].Spi.user = userSocket[curSocket.id];
+            userSocket[curSocket.id].Spi.user  = userSocket[curSocket.id];
                        
             curSocket.emit(EVENTS.NewUserConnectComplete, {});
             
