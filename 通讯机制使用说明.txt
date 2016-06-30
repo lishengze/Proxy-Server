@@ -1,0 +1,69 @@
+1. 通讯过程分析 (可以不看)
+    连接过程分为两步： 首先与服务器建立根连接，根连接建立好后，将登陆用户信息发送到服务器，让服务器为建立用户专属连接做准备，准备好后通知客户端， 客户端再建立专属连接。
+    
+    // 客户端  -------- 代理服务器
+   client : client-child-complete.js, 
+   proxy:  proxy-server.js
+   client rootSocket { io.connect(rootUrl) } ------------->>>>>>>>>   proxy ( .on('connection'))
+   client rootSocket.on('connect') }  <<<<<<<<<---------------------  proxy ( rootServer connect complete) // 自动监听
+   client rootSocket.emit(NewUserCome) ---------------->>>>>>>>  proxy { .on(NewUserCome), prepare) }   // 需要用户信息，实际操作中从这一步开始登陆连接。
+   client userSocket.on('NewUserReady')  <<<<<<<<<--------------  proxy { emit('NewUserReady!')}
+   client userSocket{ io.connect (userUrl)}  ------------->>>>>>>>>  proxy { on('userconnection') }
+   client userSocket.on('connect')  <<<<<<<<<<<------------------- proxy { userSocket connect complete } // 自动监听
+   client userSocket.on('NewUserConnectComplete')  <<<<<---------proxy userSocket.emit('NewUserConnectComplete')
+
+   // 客户端 ------- 代理服务器 ------- 后台.
+   client userSocket.emit(RegisterFront) ----->>>> proxy { userSocket.on(RegisterFront) -->>>  RegisterFront }  ------addon.node------>>>> server(c++)
+   client userSocket.on (FrontConnected)   <<<<<<<<<<<<<<<< userSocket in Spi--registered in server  -------------------------------------- server(c++)
+   client userSocket.emit(ReqLoginTopic) ----->>>> proxy { userSocket.on(ReqLoginTopic) -->>> ReqrLoginTopic }  ----addon.node---->>>> server(c++)
+   client userSocket.on (RspLoginTopic)   <<<<<<<<<<<<<<<<< userSocket in Spi registered in server  ---------------------------------------- server(c++)
+
+   客户端为了减轻数据传输对界面渲染的影响将后台通讯的数据传输放到单独的子进程中。
+   使用process.send,on 进行进程间的数据传输。传输的数据块为data{message, callbackData}
+   在主进程里还使用EventEmitter以data中的message为单位将子进程传输过来的数据进行分拆, 传输到每个应用的api中。 
+   具体说明： 
+   主进程: clientMain{ childProcess:   初始时fork(client-child.js)子进程
+                                  emitter:           与用户api以消息名通信 
+                                }
+  
+2. 使用步骤
+    在登录的package中已经载入了通信所必须的模块，并将其设置为全局变量所以可以直接使用。
+    通信所用到的对象有三个：
+    1. window.userApiStruct： 用于向后台申请数据时的必须要填写的请求数据字段， 每个请求所对应的请求数据结构参考 SysUserApiStruct.js
+        window.EVENTS： 用于向后台申请数据时的必须要填写的请求消息字段， 每个请求所对应的消息参考 event.js
+        window.userApi :  通信的api接口， 开发者使用userApi.emitter 成员以消息为单位 发送请求（emitter.emit）,接受回调数据(emitter.on)
+                          请求： userApi.emitter.emit ReqMsgName, reqField.
+                          回调： userApi.emitter.on RsqMsgName, (data) ->
+
+    2. eg: 以请求登录与接收回调数据为例。
+        请求： userApi.emitter.emit EVENTS.ReqQrySysUserLoginTopic,  reqField
+        接受回调： userApi.emitter.on EVENTS.RspQrySysUserLoginTopic, (data) ->
+        消息的名称和请求与回调的数据结构分别在 events.js 和 SysUserApiStruct.js 中可以查到。
+
+   3. 系统命名机制
+      整个系统有三类事件， 请求， 回调，订阅。订阅可以看成实时的一种回调。这三类事件对应的消息，请求与回调数据结构的名称都是由一个核心的fun名扩展而来。
+
+      fun名称确定则 请求的消息名称： EVENTS.ReqQry+fun+Topic(event.js); 请求的数据结构名称： CShfeFtdcReqQry + fun + Field（SysUserApiStruct.js）。
+
+                             回调的消息名称： EVENTS.RspQry+fun+Topic(event.js); 回调的数据结构名称：CShfeFtdcRspQry + fun +Field (SysUserApiStruct.js)
+                                                                                 回调接受的数据中对应的对象名称： pRspQry + fun （communication.js）
+
+                             订阅的消息名称：EVENTS.Rtn + fun +Topic(events.js);   订阅回调的数据结构名称： CShfeFtdcRtn + fun + Field. （SysUserApiStruct.js）
+                                                                                 订阅回调接受的数据中对应对象的名称： pRtn + fun (communication.js)
+
+      以登录消息为例，它的核心fun名称为： SysUserLogin。请求的消息名称为 EVENTS.ReqQrySysUserLoginTopic， 
+        回调的消息名称EVENTS.RspQrySysUserLoginTopic
+    
+   4. 回调信息解析
+       回调的信息为一个data 对象： 
+        {pRtn/pRspQry + fun:  回调有效信息对象， 该对象的数据结构可以通过查找 CShfeFtdcRspQry/CShfeFtdcRtn  + fun +Field (SysUserApiStruct.js) ; 
+                                             如果发生错误，该对象为undefined。
+         pRspInfo： 记录错误信息， 包含 ErrorMsg,错误信息；  ErrorID: 错误代码    
+                            若没有错误， 该对象为undefined.   
+        nRequestID: 请求的次数
+        bIsLast： 是否是当前请求的最后一个回调数据段,有些请求需要多次的回调才能将所有数据传输完成。
+}
+
+3. 异常处理
+   1） 链接时异常， 若是服务器链接突然断开并且无法重连，那么就弹出对话框，提示无法链接服务器并退出，atom.close();
+   2）子进程uncaughtException 异常， 提示用户重启客户端, atom.reload();
