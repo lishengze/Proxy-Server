@@ -26,12 +26,12 @@ if (true === isHttps) {
 		key:  fs.readFileSync("9249652-www.sfit.shfe.com.cn.key"),
 		cert: fs.readFileSync("9249652-www.sfit.shfe.com.cn.cert"),
 	};
-	var app  = require('https').createServer(options,onRequest); 
+	var app  = require('https').createServer(options,onRequest);
 	var io   = require('socket.io')(app)
 	var port = 8000;
-	app.listen(port);	
+	app.listen(port);
 } else {
-	var app  = require('http').createServer(onRequest); 
+	var app  = require('http').createServer(onRequest);
 	var io   = require('socket.io')(app);
 	var port = 80;
 	app.listen(port);
@@ -50,35 +50,34 @@ function onRequest(request, response){
 var realTimeSystemPath  = "tcp://172.1.128.165:18841";
 var innerTestSystemPath = "tcp://172.1.128.111:18842";
 
-io.on('connection', function(rootSocket) {	
+io.on('connection', function(rootSocket) {
 
-	rootSocket.on(EVENTS.NewUserCome, function(userInfo) {				
+	rootSocket.on(EVENTS.NewUserCome, function(userInfo) {
         if (undefined === userConnection[userInfo.UserID]) {
-            
-        } 
-        
-		userConnection[userInfo.UserID] = {};         
+
+        }
+
+		userConnection[userInfo.UserID] = {};
         userConnection[userInfo.UserID].userInfo = userInfo;
         userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
-        
+
         userConnection[userInfo.UserID].socket .on ('connection', function (curSocket) {
-                            
-            // 为用户创建专属的工作目录，以用户ID为名;    
-            var spawn = require('child_process').spawn('mkdir', [user[curUserIndex].userInfo.UserID]);                            
-            user[curUserIndex].userApi = new addon.FtdcSysUserApi_Wrapper(user[curUserIndex].userInfo.UserID);          
+
+            // 为用户创建专属的工作目录，以用户ID为名;
+            var spawn = require('child_process').spawn('mkdir', [user[curUserIndex].userInfo.UserID]);
+            user[curUserIndex].userApi = new addon.FtdcSysUserApi_Wrapper(user[curUserIndex].userInfo.UserID);
             userSocket[curSocket.id].Spi = new spi.Spi();
-            userSocket[curSocket.id].RequestID = 1;
             userSocket[curSocket.id].Spi.user = userSocket[curSocket.id];
-                       
+
             curSocket.emit(EVENTS.NewUserConnectComplete, {});
-            
+
             curSocket.on(EVENTS.RegisterFront, function() {
 				OutputMessage('Connect Front!');
-                userSocket[curSocket.id].userApi.RegisterFront(realTimeSystemPath);   
+                userSocket[curSocket.id].userApi.RegisterFront(realTimeSystemPath);
                 userSocket[curSocket.id].userApi.RegisterSpi(userSocket[curSocket.id].Spi);
-                userSocket[curSocket.id].userApi.Init();   				
+                userSocket[curSocket.id].userApi.Init();
 			});
-        
+
 */});
 var jsonContent=require("./package.json");
 
@@ -95,7 +94,7 @@ AfterRtnNetNonPartyLinkInfoTopic++;
 
 for(var i=beforeRspQryTopCpuInfoTopic;i<AfterRtnNetNonPartyLinkInfoTopic;i++) {
     var funcName  = jsonContent.FTD.packages[0].package[i].$.name;
-    var funcType  = funcName.substring(0,3);   
+    var funcType  = funcName.substring(0,3);
     if (funcType === "Req" &&
         funcName.substring(funcName.length - 5, funcName.length) == "Topic" &&
         funcName!=="ReqQryNetMemberSDHLineInfoTopic"&&
@@ -123,21 +122,21 @@ for(var i=beforeRspQryTopCpuInfoTopic;i<AfterRtnNetNonPartyLinkInfoTopic;i++) {
                       + tabSpace[4] + "if ( -1 === flag) {\n"
                       + tabSpace[5] + "curSocket.emit(EVENTS."+ funcName +"Failed, flag);\n"
                       + tabSpace[4] + "}\n"
-                      + tabSpace[3] + "});\n\n";  
+                      + tabSpace[3] + "});\n\n";
         }
-        
+
 }
 
 fileData += hereDoc(function () {
-/*               									
+/*
 	    }); // rootSocket.on('new user', function(userInfo) end!
-        
+
         rootSocket.emit(EVENTS.NewUserReady, {});
-        	
-    }); //rootSocket.on(EVENTS.NewUserCome);     	
+
+    }); //rootSocket.on(EVENTS.NewUserCome);
 }); // io.on('connection', function(rootSocket)) end!
 
-*/    
+*/
 });
 
 var pathName = '../new file/';
@@ -145,7 +144,7 @@ var fileName = 'proxy-server.js';
 fs.writeFile(pathName + fileName, fileData, function (err) {
     if (err) {
         console.log(err);
-    } else {            
+    } else {
         console.log('Succeed in saving ' + pathName + fileName);
     }
 
