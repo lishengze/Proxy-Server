@@ -20,64 +20,7 @@ while(jsonContent.FTD.packages[0].package[AfterRtnNetNonPartyLinkInfoTopic].$.na
 }
 AfterRtnNetNonPartyLinkInfoTopic++;
 
-var fileData = hereDoc(function () {
-/*var EventEmitter = require ('events').EventEmitter;
-var fork         = require ('child_process').fork;
-var path         = require ('path');
-var childprocess = [];
-
-var ClientMain = function () {
-   this.emitter = new EventEmitter;
-   this.childFilePath = path.join( __dirname, 'client-child-complete.js');
-   this.childProcess = fork (this.childFilePath, ['Hello client-child!']);
-   childprocess[this.childProcess.pid] = this.childProcess;
-
-   this.RestartFunc = (function(_this){
-     return function() {
-       _this.childProcess = fork (_this.childFilePath, ['Hello client-child!']);
-       delete childprocess[_this.childProcess.pid];
-       childprocess[_this.childProcess.pid] = _this.childProcess;
-     };
-   }(this));
-
-   this.childProcess.on ('message', (function(_this) {
-     return function(data) {
-       if (data.callbackData.hasOwnProperty("nRequestID")){
-          data.message = data.message + data.callbackData.nRequestID;
-      }
-      _this.emitter.emit(data.message, data.callbackData.);
-    };
-   })(this));
-
-   this.childProcess.on('exit',  (function(_this) {
-     return function() {
-       _this.emitter.emit('childprocess exit', {});
-     };
-   })(this));
-
-   // 手动添加的请求事件。
-   this.emitter.on(EVENTS.StartConnectServer,  (function(_this) {
-     return function(reqData) {
-       var data={};
-       data.event = EVENTS.StartConnectServer;
-       data.reqField = reqData;
-       console.log (data)
-       _this.childProcess.send(data);
-     };
-   })(this));
-
-   this.emitter.on(EVENTS.NewUserCome,  (function(_this) {
-     return function(reqData) {
-       var data={};
-       data.event = EVENTS.NewUserCome;
-       data.reqField = reqData;
-       console.log (data)
-       _this.childProcess.send(data);
-     };
-   })(this));
-
-*/});
-
+var fileData = "";
 for(var i=beforeRspQryTopCpuInfoTopic;i<AfterRtnNetNonPartyLinkInfoTopic;i++) {
     var funcName  = jsonContent.FTD.packages[0].package[i].$.name;
     var funcType  = funcName.substring(0,3);
@@ -103,40 +46,14 @@ for(var i=beforeRspQryTopCpuInfoTopic;i<AfterRtnNetNonPartyLinkInfoTopic;i++) {
         funcName!=="ReqQryKeyFileInfoTopic"&&funcName!=="ReqQryHostMonitorCfgTopic"&&
         funcName!=="ReqQryAppMonitorCfgTopic"
         ) {
-            fileData += tabSpace[1] + "this.emitter.on(EVENTS." + funcName + ",  (function(_this) {" + "\n"
-                      + tabSpace[2] + "return function(reqData) { " + "\n"
-                      + tabSpace[3] + "var data={};" + "\n"
-                      + tabSpace[3] + "data.event = EVENTS." + funcName+ ";" +"\n"
-                      + tabSpace[3] + "data.reqField = reqData;" + "\n"
-                      + tabSpace[3] + "_this.childProcess.send(data);" + "\n"
-                      + tabSpace[2] + "};" + "\n"
-                      + tabSpace[1] + "})(this));" + "\n\n";
+            fileData += "" + funcName + "RequestID = 0;" + "\n\n";
         }
 }
 
-fileData += hereDoc(function () {/*};
-
-var ExitFunc = function() {
-  for (var pid in childprocess) {
-    childprocess[pid].kill();
-  }
-};
-
-process.on('uncaughtException', function(){
-  ExitFunc();
-});
-
-process.on('exit', function(){
-  ExitFunc();
-});
-
-module.exports = new ClientMain();
-
-*/});
 
 fileData += "\n\n";
 var pathName = '../new file/';
-var fileName = 'client-main.js';
+var fileName = 'window-requstid.js';
 fs.writeFile(pathName + fileName, fileData, function (err) {
     if (err) {
         console.log(err);

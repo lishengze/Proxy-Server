@@ -8,23 +8,24 @@ function hereDoc(f) {
 var fileData = hereDoc(function () {
 /*var fs               = require('fs');
 var spi              = require("./communication.js");
-var addon            = require("./addon.node");
-
+var addon            = require("./addon");
 var events           = require("./events.js");
 var EVENTS           = new events.EVENTS();
 
 var toolFunc         = require("./tool-function.js");
 var OutputMessage    = toolFunc.OutputMessage;
+var getSubString     = toolFunc.getSubString;
 
 var userConnection   = [];
 var userSocket       = [];
+var userLoginedIn    = [];
 var userCount        = 0;
-var isHttps          = false;
+var isHttps          = true;
 
 if (true === isHttps) {
 	var options = {
-		key:  fs.readFileSync("9249652-www.sfit.shfe.com.cn.key"),
-		cert: fs.readFileSync("9249652-www.sfit.shfe.com.cn.cert"),
+		key:  fs.readFileSync("sfit.key"),
+		cert: fs.readFileSync("sfit.cert"),
 	};
 	var app  = require('https').createServer(options,onRequest);
 	var io   = require('socket.io')(app)
@@ -47,41 +48,85 @@ function onRequest(request, response){
 	}
 }
 
+var showCurProcessThreads = function () {
+    var path = require('path');
+    var spawn = require('child_process').spawn;
+    var dir = path.join('/proc', process.pid.toString(), 'task');
+    var ls = spawn('ls', [dir]);
+    console.log('process.pid: ' + process.pid);
+    ls.stdout.on('data', function(data){
+        console.log('Time:'+Date.now()+'\nThreads: \n'+ data);
+    });
+}
+
+OutputMessage('Before rootServer connect!');
+showCurProcessThreads();
+
 var realTimeSystemPath  = "tcp://172.1.128.165:18841";
 var innerTestSystemPath = "tcp://172.1.128.111:18842";
 
 io.on('connection', function(rootSocket) {
+    var spawn = require('child_process').spawn('mkdir', ['usr']);
 
-	rootSocket.on(EVENTS.NewUserCome, function(userInfo) {
-        if (undefined === userConnection[userInfo.UserID]) {
+    OutputMessage("Proxy-Server: root connect complete!");
+    //showCurProcessThreads();
 
+    rootSocket.on('disconnect', function(data) {
+    	//showCurProcessThreads();
+			console.log('rootSocket disconnect!');
+		});
+
+		rootSocket.on(EVENTS.NewUserCome, function(userInfo) {
+        if (undefined !== userLoginedIn[userInfo.UserID]) {
+            OutputMessage("Proxy-Server: " + userInfo.UserID + " has already logged!");
+            rootSocket.emit("user reconnected", userInfo.UserID);
+            return;
         }
+        userLoginedIn[userInfo.UserID] = userInfo;
 
-		userConnection[userInfo.UserID] = {};
-        userConnection[userInfo.UserID].userInfo = userInfo;
-        userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
+        if (undefined === userConnection[userInfo.UserID])
+        {
+          console.log(userInfo.UserID + ' first time!');
+          userConnection[userInfo.UserID] = {};
+          userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
+          userConnection[userInfo.UserID].userInfo = userInfo;
+          var userWorkDirName = 'usr/' + userInfo.UserID;
+          var spawn = require('child_process').spawn('mkdir', [userWorkDirName]);
 
-        userConnection[userInfo.UserID].socket .on ('connection', function (curSocket) {
+          userConnection[userInfo.UserID].socket.on ('connection', function (curSocket) {
+               // showCurProcessThreads();
+              curSocket.on('disconnect', function(data) {
+                userLoginedIn[userInfo.UserID] = undefined;
+                // userConnection[currUserID] = undefined;
+                userSocket[currUserID] = {};
+  		          OutputMessage("Proxy-Server: user " + currUserID + " disconnected!");
+  	          });
 
-            // 为用户创建专属的工作目录，以用户ID为名;
-            var spawn = require('child_process').spawn('mkdir', [user[curUserIndex].userInfo.UserID]);
-            user[curUserIndex].userApi = new addon.FtdcSysUserApi_Wrapper(user[curUserIndex].userInfo.UserID);
-            userSocket[curSocket.id].Spi = new spi.Spi();
-            userSocket[curSocket.id].Spi.user = userSocket[curSocket.id];
+              // var currUserID = getSubString(currUserID, '/','#');
+              var currUserID = curSocket.nsp.name.slice(1);
+              var userWorkDirName = 'usr/' + currUserID + '/';
+              OutputMessage("Proxy-Server: new user " + currUserID + " connect completed!");
 
-            curSocket.emit(EVENTS.NewUserConnectComplete, {});
+              userSocket[currUserID]           = {};
+              userSocket[currUserID].socket    = curSocket;
+              userSocket[currUserID].userApi   = new addon.FtdcSysUserApi_Wrapper(userWorkDirName);
+              userSocket[currUserID].Spi       = new spi.Spi();
+              userSocket[currUserID].Spi.user  = userSocket[currUserID];
 
-            curSocket.on(EVENTS.RegisterFront, function() {
-				OutputMessage('Connect Front!');
-                userSocket[curSocket.id].userApi.RegisterFront(realTimeSystemPath);
-                userSocket[curSocket.id].userApi.RegisterSpi(userSocket[curSocket.id].Spi);
-                userSocket[curSocket.id].userApi.Init();
-			});
+              curSocket.emit(EVENTS.NewUserConnectComplete, {});
 
+              curSocket.on(EVENTS.RegisterFront, function() {
+  								OutputMessage('\n------  Proxy-Server: Connect Front!-------\n');
+                  userSocket[currUserID].userApi.RegisterFront(realTimeSystemPath);
+                  userSocket[currUserID].userApi.RegisterSpi(userSocket[currUserID].Spi);
+                  userSocket[currUserID].userApi.Init();
+
+                  curSocket.emit("Test Front", 'succeed!');
+  			      });
 */});
 var jsonContent=require("./package.json");
 
-var tabSpace = ["","    ", "        ", "            ", "                ","                    "];
+var tabSpace = ["","    ", "        ", "            ", "                ","                    ","                      "];
 var beforeRspQryTopCpuInfoTopic=0;
 while(jsonContent.FTD.packages[0].package[beforeRspQryTopCpuInfoTopic].$.name!=="RspQryTopCpuInfoTopic"){
     beforeRspQryTopCpuInfoTopic++;
@@ -117,21 +162,21 @@ for(var i=beforeRspQryTopCpuInfoTopic;i<AfterRtnNetNonPartyLinkInfoTopic;i++) {
         funcName!=="ReqQryKeyFileInfoTopic"&&funcName!=="ReqQryHostMonitorCfgTopic"&&
         funcName!=="ReqQryAppMonitorCfgTopic"
         ) {
-            fileData += tabSpace[3] + "curSocket.on(EVENTS." + funcName + ", function(reqField) {\n"
-                      + tabSpace[4] + "var flag = userSocket[curSocket.id].userApi." + funcName + "(reqField, userSocket[curSocket.id].RequestID++);\n"
-                      + tabSpace[4] + "if ( -1 === flag) {\n"
-                      + tabSpace[5] + "curSocket.emit(EVENTS."+ funcName +"Failed, flag);\n"
-                      + tabSpace[4] + "}\n"
-                      + tabSpace[3] + "});\n\n";
+            fileData += tabSpace[4] + "curSocket.on(EVENTS." + funcName + ", function(reqField) {\n"
+                      + tabSpace[5] + "var flag = userSocket[currUserID].userApi." + funcName + "(reqField.reqObject, reqField.RequestId);\n"
+                      + tabSpace[5] + "if ( -1 === flag) {\n"
+                      + tabSpace[6] + "curSocket.emit(EVENTS."+ funcName +"Failed, flag);\n"
+                      + tabSpace[5] + "}\n"
+                      + tabSpace[4] + "});\n\n";
         }
 
 }
 
 fileData += hereDoc(function () {
 /*
-	    }); // rootSocket.on('new user', function(userInfo) end!
-
-        rootSocket.emit(EVENTS.NewUserReady, {});
+	       }); // rootSocket.on('new user', function(userInfo) end!
+        }
+        rootSocket.emit(EVENTS.NewUserReady, userInfo);
 
     }); //rootSocket.on(EVENTS.NewUserCome);
 }); // io.on('connection', function(rootSocket)) end!
