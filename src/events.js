@@ -1,39 +1,18 @@
 var events = function () {
-    // child process events
-    this.ChildProcessBeforeExit = 'ChildProcessBeforeExit',
-    this.ChildProcessExit = 'ChildProcessExit',
-    this.ChildProcessUncaughtException = 'ChildProcessUncaughtException',
-
-    // root socket events
-    this.RootSocketConnect= "RootSocketConnect",
-    this.RootSocketConnectError= "RootSocketConnectError",
-    this.RootSocketDisconnect = "RootSocketDisconnect",
-    this.RootSocketReconnect = "RootSocketReconnect",
-    this.RootSocketReconnectAttempt = "RootSocketReconnectAttempt",
-    this.RootSocketReconnecting = "RootSocketReconnecting",
-    this.RootSocketReconnectError = "RootSocketReconnectError",
-    this.RootSocketReconnectFailed = "RootSocketReconnectFailed",
-
-    // user socket events
-    this.StartConnectServer = "StartConnectServer",
-    this.ConnectServerComplete = 'ConnectServerComplete',
     this.NewUserCome =   "NewUserCome",
     this.NewUserReady =  "NewUserReady",
     this.NewUserConnectComplete = "NewUserConnectComplete",
-
-    // server connect events-ManualGenerate
-    this.New = "New",
+    
+	this.New = "New",
     this.Release = "Release",
     this.Init =  "Init",
     this.Join =  "Join",
-    this.ReqUserLogin = "ReqUserLogin",
+	this.ReqUserLogin = "ReqUserLogin",
     this.GetTradingDay =  "GetTradingDay",
     this.RegisterFront =  "RegisterFront",
     this.RegisterSpi =  "RegisterSpi",
     this.SubscribeMarketDataTopic =  "SubscribeMarketDataTopic",
     this.SubscribePartAccount =  "SubscribePartAccount",
-
-    // server connect events-AutoGenerate
 
     this.ReqQryTopMemInfoTopic = "ReqQryTopMemInfoTopic",
     this.ReqQryTopMemInfoTopicFailed = "ReqQryTopMemInfoTopicFailed",
@@ -273,7 +252,7 @@ var events = function () {
     this.FrontConnected = "FrontConnected CallbackData",
     this.FrontDisConnected = "FrontDisConnected CallbackData",
     this.HeartBeatWarning =  "HeartBeatWarning CallbackData",
-
+    
     this.RspQryTopCpuInfoTopic = "RspQryTopCpuInfoTopic CallbackData",
     this.RtnTopCpuInfoTopic = "RtnTopCpuInfoTopic CallbackData",
     this.RspQryTopMemInfoTopic = "RspQryTopMemInfoTopic CallbackData",

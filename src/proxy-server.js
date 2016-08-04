@@ -44,7 +44,7 @@ var reset = function (){
 	userConnection   = [];
 	userSocket       = [];
 	userLoginedIn    = [];
-	userCount        = 0;
+	userCount        = 0;	
 }
 
 var showCurProcessThreads = function () {
@@ -76,7 +76,7 @@ io.on('connection', function(rootSocket) {
 			console.log('rootSocket disconnect!');
 		});
 
-		rootSocket.on(EVENTS.SocketIONewUserCome, function(userInfo) {
+		rootSocket.on(EVENTS.NewUserCome, function(userInfo) {
         if (undefined !== userLoginedIn[userInfo.UserID]) {
             OutputMessage("Proxy-Server: " + userInfo.UserID + " has already logged!");
             rootSocket.emit("user reconnected", userInfo.UserID);
@@ -97,7 +97,7 @@ io.on('connection', function(rootSocket) {
                // showCurProcessThreads();
               var currUserID = curSocket.nsp.name.slice(1);
               var userWorkDirName = 'usr/' + currUserID + '/';
-
+              
               curSocket.on('disconnect', function(data) {
                 userLoginedIn[currUserID] = undefined;
                 // userConnection[currUserID] = undefined;
@@ -105,7 +105,7 @@ io.on('connection', function(rootSocket) {
   		          OutputMessage("Proxy-Server: user " + currUserID + " disconnected!");
   	          });
 
-              // var currUserID = getSubString(currUserID, '/','#');
+              // var currUserID = getSubString(currUserID, '/','#');              
               OutputMessage("Proxy-Server: new user " + currUserID + " connect completed!");
 
               userSocket[currUserID]           = {};
@@ -114,7 +114,7 @@ io.on('connection', function(rootSocket) {
               userSocket[currUserID].Spi       = new spi.Spi();
               userSocket[currUserID].Spi.user  = userSocket[currUserID];
 
-              curSocket.emit(EVENTS.SocketIONewUserConnectComplete, {});
+              curSocket.emit(EVENTS.NewUserConnectComplete, {});
 
               curSocket.on(EVENTS.RegisterFront, function() {
   								OutputMessage('\n------  Proxy-Server: Connect Front!-------\n');
@@ -950,7 +950,8 @@ io.on('connection', function(rootSocket) {
 
 	       }); // rootSocket.on('new user', function(userInfo) end!
         }
-        rootSocket.emit(EVENTS.SocketIONewUserReady, userInfo);
+        rootSocket.emit(EVENTS.NewUserReady, userInfo);
 
-    }); //rootSocket.on(EVENTS.SocketIONewUserCome);
+    }); //rootSocket.on(EVENTS.NewUserCome);
 }); // io.on('connection', function(rootSocket)) end!
+
