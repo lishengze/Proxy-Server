@@ -11,10 +11,8 @@ var getSubString     = toolFunc.getSubString;
 var userConnection   = [];
 var userSocket       = [];
 var userLoginedIn    = [];
-var userSocketioId   = [];
 var userCount        = 0;
 var isHttps          = true;
-var idNumber         = 10;
 
 if (true === isHttps) {
 	var options = {
@@ -42,14 +40,6 @@ function onRequest(request, response){
 	}
 }
 
-var getIdArray = function(idNumber) {
-	var array = new Array(idNumber);
-	for (var i = 0; i < idNumber; ++i) {
-		array[i] = i;
-	}
-	return array;
-}
-
 var showCurProcessThreads = function () {
     var path = require('path');
     var spawn = require('child_process').spawn;
@@ -61,6 +51,7 @@ var showCurProcessThreads = function () {
     });
 }
 
+OutputMessage('Before rootServer connect!');
 showCurProcessThreads();
 
 var realTimeSystemPath  = "tcp://172.1.128.165:18841";
@@ -73,51 +64,39 @@ io.on('connection', function(rootSocket) {
     //showCurProcessThreads();
 
     rootSocket.on('disconnect', function(data) {
-    	// showCurProcessThreads();
-			console.log('Proxy-Server: rootSocket disconnect!');
+    	//showCurProcessThreads();
+			console.log('rootSocket disconnect!');
 		});
 
-		rootSocket.on('Test-Connect', function(){
-			console.log('Proxy-Server: Test-Connect');
-		})
+		rootSocket.on(EVENTS.NewUserCome, function(userInfo) {
+        if (undefined !== userLoginedIn[userInfo.UserID]) {
+            OutputMessage("Proxy-Server: " + userInfo.UserID + " has already logged!");
+            rootSocket.emit("user reconnected", userInfo.UserID);
+            return;
+        }
+        userLoginedIn[userInfo.UserID] = userInfo;
 
-		rootSocket.on(EVENTS.SocketIONewUserCome, function(userInfo) {
-
-				if (undefined === userSocketioId[userInfo.UserID]) {
-					userSocketioId[userInfo.UserID] = getIdArray(idNumber);
-				}
-				console.log (userSocketioId[userInfo.UserID]);
-				var curNumberId = userSocketioId[userInfo.UserID].shift();
-				OutputMessage("Proxy-Server: user: " + userInfo.UserID + " , numberid:  " + curNumberId);
-
-				CurUserSocketioId = userInfo.UserID + curNumberId;
-				userLoginedIn[CurUserSocketioId] = {}
-				userLoginedIn[CurUserSocketioId].numbId = curNumberId;
-				userLoginedIn[CurUserSocketioId].userId = userInfo.UserID;
-
-        if (undefined === userConnection[CurUserSocketioId])
+        if (undefined === userConnection[userInfo.UserID])
         {
-          console.log(CurUserSocketioId + ' first time!');
-
-          userConnection[CurUserSocketioId] = {};
-          userConnection[CurUserSocketioId].socket = io.of('/' + CurUserSocketioId);
-          userConnection[CurUserSocketioId].userInfo = userInfo;
-          var userWorkDirName = 'usr/' + CurUserSocketioId;
+          console.log(userInfo.UserID + ' first time!');
+          userConnection[userInfo.UserID] = {};
+          userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
+          userConnection[userInfo.UserID].userInfo = userInfo;
+          var userWorkDirName = 'usr/' + userInfo.UserID;
           var spawn = require('child_process').spawn('mkdir', [userWorkDirName]);
 
-          userConnection[CurUserSocketioId].socket.on ('connection', function (curSocket) {
-
-              var currUserID = curSocket.nsp.name.slice(1);
-              var userWorkDirName = 'usr/' + currUserID + '/';
-
+          userConnection[userInfo.UserID].socket.on ('connection', function (curSocket) {
+               // showCurProcessThreads();
               curSocket.on('disconnect', function(data) {
-								originalUserId = userLoginedIn[currUserID].userId;
-								userSocketioId[originalUserId].push(userLoginedIn[currUserID].numbId);
+                userLoginedIn[userInfo.UserID] = undefined;
+                // userConnection[currUserID] = undefined;
                 userSocket[currUserID] = {};
   		          OutputMessage("Proxy-Server: user " + currUserID + " disconnected!");
   	          });
 
               // var currUserID = getSubString(currUserID, '/','#');
+              var currUserID = curSocket.nsp.name.slice(1);
+              var userWorkDirName = 'usr/' + currUserID + '/';
               OutputMessage("Proxy-Server: new user " + currUserID + " connect completed!");
 
               userSocket[currUserID]           = {};
@@ -126,7 +105,7 @@ io.on('connection', function(rootSocket) {
               userSocket[currUserID].Spi       = new spi.Spi();
               userSocket[currUserID].Spi.user  = userSocket[currUserID];
 
-              curSocket.emit(EVENTS.SocketIONewUserConnectComplete, {});
+              curSocket.emit(EVENTS.NewUserConnectComplete, {});
 
               curSocket.on(EVENTS.RegisterFront, function() {
   								OutputMessage('\n------  Proxy-Server: Connect Front!-------\n');
@@ -134,7 +113,7 @@ io.on('connection', function(rootSocket) {
                   userSocket[currUserID].userApi.RegisterSpi(userSocket[currUserID].Spi);
                   userSocket[currUserID].userApi.Init();
 
-                  //curSocket.emit("Test Front", 'succeed!');
+                  curSocket.emit("Test Front", 'succeed!');
   			      });
                 curSocket.on(EVENTS.ReqQryTopMemInfoTopic, function(reqField) {
                     var flag = userSocket[currUserID].userApi.ReqQryTopMemInfoTopic(reqField.reqObject, reqField.RequestId);
@@ -376,8 +355,6 @@ io.on('connection', function(rootSocket) {
 
                 curSocket.on(EVENTS.ReqQrySysUserLoginTopic, function(reqField) {
                     var flag = userSocket[currUserID].userApi.ReqQrySysUserLoginTopic(reqField.reqObject, reqField.RequestId);
-                    // var flag = userSocket[currUserID].userApi.ReqQrySysUserLoginTopic(reqField, 1);
-                    console.log(reqField);
                     if ( -1 === flag) {
                       curSocket.emit(EVENTS.ReqQrySysUserLoginTopicFailed, flag);
                     }
@@ -818,8 +795,6 @@ io.on('connection', function(rootSocket) {
                 });
 
                 curSocket.on(EVENTS.ReqQryNetMonitorAttrScopeTopic, function(reqField) {
-                	  // console.log(EVENTS.ReqQryNetMonitorAttrScopeTopic);
-                		// console.log(reqField);
                     var flag = userSocket[currUserID].userApi.ReqQryNetMonitorAttrScopeTopic(reqField.reqObject, reqField.RequestId);
                     if ( -1 === flag) {
                       curSocket.emit(EVENTS.ReqQryNetMonitorAttrScopeTopicFailed, flag);
@@ -962,7 +937,8 @@ io.on('connection', function(rootSocket) {
 
 	       }); // rootSocket.on('new user', function(userInfo) end!
         }
-        rootSocket.emit(EVENTS.SocketIONewUserReady, CurUserSocketioId);
+        rootSocket.emit(EVENTS.NewUserReady, userInfo);
 
-    }); //rootSocket.on(EVENTS.SocketIONewUserCome);
+    }); //rootSocket.on(EVENTS.NewUserCome);
 }); // io.on('connection', function(rootSocket)) end!
+
