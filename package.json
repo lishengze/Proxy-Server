@@ -1,0 +1,16 @@
+{
+  "name": "proxy-server-local",
+  "main": "./src/proxy-server-local.js",
+  "version": "0.1.1",
+  "description": "本地服务端",
+  "keywords": [
+  ],
+
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+    "socket.io": "^1.4.5"
+  }
+}
