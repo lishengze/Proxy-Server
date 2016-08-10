@@ -11,10 +11,8 @@ var getSubString     = toolFunc.getSubString;
 var userConnection   = [];
 var userSocket       = [];
 var userLoginedIn    = [];
-var userSocketioId   = [];
 var userCount        = 0;
 var isHttps          = true;
-var idNumber         = 10;
 
 if (true === isHttps) {
 	var options = {
@@ -42,12 +40,11 @@ function onRequest(request, response){
 	}
 }
 
-var getIdArray = function(idNumber) {
-	var array = new Array(idNumber);
-	for (var i = 0; i < idNumber; ++i) {
-		array[i] = i;
-	}
-	return array;
+var reset = function (){
+	userConnection   = [];
+	userSocket       = [];
+	userLoginedIn    = [];
+	userCount        = 0;
 }
 
 var showCurProcessThreads = function () {
@@ -61,6 +58,7 @@ var showCurProcessThreads = function () {
     });
 }
 
+OutputMessage('Before rootServer connect!');
 showCurProcessThreads();
 
 var realTimeSystemPath  = "tcp://172.1.128.165:18841";
@@ -74,54 +72,36 @@ io.on('connection', function(rootSocket) {
 
     rootSocket.on('disconnect', function(data) {
     	// showCurProcessThreads();
-			console.log('Proxy-Server: rootSocket disconnect!');
+    	// reset();
+			console.log('rootSocket disconnect!');
 		});
 
-		rootSocket.on('Test-Connect', function(){
-			console.log('Proxy-Server: Test-Connect');
-		})
-
 		rootSocket.on(EVENTS.SocketIONewUserCome, function(userInfo) {
-        // if (undefined !== userLoginedIn[userInfo.UserID]) {
-				//
-        //     // OutputMessage("Proxy-Server: " + userInfo.UserID + " has already logged!");
-        //     // rootSocket.emit("user reconnected", userInfo.UserID);
-        //     // return;
-        // } else {
-				//
-				// 	userLoginedIn[userInfo.UserID] = userInfo;
-				// }
+        if (undefined !== userLoginedIn[userInfo.UserID]) {
+            OutputMessage("Proxy-Server: " + userInfo.UserID + " has already logged!");
+            rootSocket.emit("user reconnected", userInfo.UserID);
+            return;
+        }
 
-				if (undefined === userSocketioId[userInfo.UserID]) {
-					userSocketioId[userInfo.UserID] = getIdArray(idNumber);
-				}
-				console.log (userSocketioId[userInfo.UserID]);
-				var curNumberId = userSocketioId[userInfo.UserID].shift();
-				OutputMessage("Proxy-Server: user " + userInfo.UserID + " , numberid:  " + curNumberId);
+        userLoginedIn[userInfo.UserID] = userInfo;
 
-				CurUserSocketioId = userInfo.UserID + curNumberId;
-				userLoginedIn[CurUserSocketioId] = {}
-				userLoginedIn[CurUserSocketioId].numbId = curNumberId;
-				userLoginedIn[CurUserSocketioId].userId = userInfo.UserID;
-
-        if (undefined === userConnection[CurUserSocketioId])
+        if (undefined === userConnection[userInfo.UserID])
         {
-          console.log(CurUserSocketioId + ' first time!');
-
-          userConnection[CurUserSocketioId] = {};
-          userConnection[CurUserSocketioId].socket = io.of('/' + CurUserSocketioId);
-          userConnection[CurUserSocketioId].userInfo = userInfo;
-          var userWorkDirName = 'usr/' + CurUserSocketioId;
+          console.log(userInfo.UserID + ' first time!');
+          userConnection[userInfo.UserID] = {};
+          userConnection[userInfo.UserID].socket = io.of('/' + userInfo.UserID);
+          userConnection[userInfo.UserID].userInfo = userInfo;
+          var userWorkDirName = 'usr/' + userInfo.UserID;
           var spawn = require('child_process').spawn('mkdir', [userWorkDirName]);
 
-          userConnection[CurUserSocketioId].socket.on ('connection', function (curSocket) {
-
+          userConnection[userInfo.UserID].socket.on ('connection', function (curSocket) {
+               // showCurProcessThreads();
               var currUserID = curSocket.nsp.name.slice(1);
               var userWorkDirName = 'usr/' + currUserID + '/';
 
               curSocket.on('disconnect', function(data) {
-								originalUserId = userLoginedIn[currUserID].userId;
-								userSocketioId[originalUserId].push(userLoginedIn[currUserID].numbId);
+                userLoginedIn[currUserID] = undefined;
+                // userConnection[currUserID] = undefined;
                 userSocket[currUserID] = {};
   		          OutputMessage("Proxy-Server: user " + currUserID + " disconnected!");
   	          });
@@ -971,7 +951,7 @@ io.on('connection', function(rootSocket) {
 
 	       }); // rootSocket.on('new user', function(userInfo) end!
         }
-        rootSocket.emit(EVENTS.SocketIONewUserReady, CurUserSocketioId);
+        rootSocket.emit(EVENTS.SocketIONewUserReady, userInfo.UserID);
 
     }); //rootSocket.on(EVENTS.SocketIONewUserCome);
 }); // io.on('connection', function(rootSocket)) end!
