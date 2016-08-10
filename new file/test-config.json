@@ -1,0 +1,1 @@
+{"SystemConfig":{"Topics":[{"TopicA":[{"$":{"name":"tseries","id":"0x00001003"}}],"TopicB":[{"$":{"name":"tresult","id":"0x00001001"}}]}],"Books":[{"Book":[{"$":{"name":"tseries","id":"0x00001003"}},{"$":{"name":"tresult","id":"0x00001001"}}]}]}}

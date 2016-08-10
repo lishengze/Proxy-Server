@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE SystemConfig SYSTEM "">
+<SystemConfig>
+	<Topics>
+		<TopicA name="tseries"  id="0x00001003"/>
+		<TopicB name="tresult"  id="0x00001001"/>
+	</Topics>
+	<Books>
+		<Book name="tseries" id="0x00001003"/>
+		<Book name="tresult" id="0x00001001"/>
+	</Books>
+</SystemConfig>

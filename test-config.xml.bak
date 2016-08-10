@@ -1,0 +1,6 @@
+﻿	<SystemConfig>
+		<AttrDefine>
+			<Attr name="CPURatio" valueType="percent" interval="500" comment="主机的cpu使用率">
+				<app name="dbnode"/>
+		</AttrDefine>
+	</SystemConfig>

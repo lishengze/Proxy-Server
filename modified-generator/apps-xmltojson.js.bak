@@ -16,7 +16,7 @@ function loadXMLDoc(filePath){
 }
 
 var pathName = '../new file/';
-var fileName = 'test-config.json';
+var fileName = 'system-config.json';
 var xmlPath  = '../test-config.xml';
 var fileData = loadXMLDoc(xmlPath); //后面可直接调用rawJSON
 
