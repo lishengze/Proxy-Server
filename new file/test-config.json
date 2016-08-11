@@ -1,1 +1,19 @@
-{"SystemConfig":{"Topics":[{"TopicA":[{"$":{"name":"tseries","id":"0x00001003"}}],"TopicB":[{"$":{"name":"tresult","id":"0x00001001"}}]}],"Books":[{"Book":[{"$":{"name":"tseries","id":"0x00001003"}},{"$":{"name":"tresult","id":"0x00001001"}}]}]}}
+{
+  "SystemConfig":
+  {
+    "AttrDefine":[
+                  {"Attr":[
+                            {
+                              "$":{"name":"CPURatio","valueType":"percent","interval":"500","comment":"主机的cpu使用率"},
+                              "app":[{"$":{"name":"dbnode"}}]
+                            },
+                            {
+                              "$":{"name":"MemRatio","valueType":"percent","interval":"500","comment":"实例的占用的内存比率"},
+                              "app":[{"$":{"name":"dbnode"}}]
+                            }
+                          ]
+                  }
+                ]
+  }
+
+}
