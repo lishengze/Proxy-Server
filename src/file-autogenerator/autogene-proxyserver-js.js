@@ -163,9 +163,7 @@ AfterRtnNetNonPartyLinkInfoTopic++;
 
 for(var i=beforeRspQryTopCpuInfoTopic;i<AfterRtnNetNonPartyLinkInfoTopic;i++) {
     var reqFuncName = jsonContent.FTD.packages[0].package[i].$.name;
-    var kernelFuncName = reqFuncName.substring(6, reqFuncName.length - 5);
-    var rspDataName = "CShfeFtdcRspQry" + kernelFuncName + "Field";
-    var rspEventName ="RspQry" + kernelFuncName + "Topic";
+
     var funcType  = reqFuncName.substring(0,3);
     if (funcType === "Req" &&
         reqFuncName.substring(reqFuncName.length - 5, reqFuncName.length) == "Topic" &&
@@ -189,17 +187,16 @@ for(var i=beforeRspQryTopCpuInfoTopic;i<AfterRtnNetNonPartyLinkInfoTopic;i++) {
         reqFuncName!=="ReqQryKeyFileInfoTopic"&&reqFuncName!=="ReqQryHostMonitorCfgTopic"&&
         reqFuncName!=="ReqQryAppMonitorCfgTopic"
         ) {
-            fileData += tabSpace[4] + "curSocket.on(EVENTS." + reqFuncName + ", function(reqField) {\n";
-            if (reqFuncName === "ReqQrySysUserLoginTopic") {
-              fileData += tabSpace[5] + "console.log(\"ReqQrySysUserLoginTopic\")\n"
-                        + tabSpace[5] + "console.log(reqField);\n"
-             }
-                      // + tabSpace[5] + "var flag = userSocket[currUserID].userApi." + reqFuncName + "(reqField.reqObject, reqField.RequestId);\n"
-                      // + tabSpace[5] + "if ( -1 === flag) {\n"
-                      // + tabSpace[6] + "curSocket.emit(EVENTS."+ reqFuncName +"Failed, flag);\n"
-                      // + tabSpace[5] + "}\n"
-            fileData += tabSpace[5] + "var rspData = new SysUserApiStruct." + rspDataName + "();\n"
-                      + tabSpace[5] + "curSocket.emit(EVENTS."+ rspEventName +", rspData);\n"
+          var kernelFuncName = reqFuncName.substring(6, reqFuncName.length - 5);
+          var rspDataFieldName = "CShfeFtdcRspQry" + kernelFuncName + "Field";
+          var rspEventName ="RspQry" + kernelFuncName + "Topic";
+          var rspDataName = "pRspQry" + kernelFuncName;
+            fileData += tabSpace[4] + "curSocket.on(EVENTS." + reqFuncName + ", function(reqField) {\n"
+                      + tabSpace[5] + "var callbackData = {}\n"
+                      + tabSpace[5] + "callbackData."+ rspDataName +" = new SysUserApiStruct." + rspDataFieldName + "();\n"
+                      + tabSpace[5] + "callbackData.nRequestID = reqField.RequestId;\n"
+                      + tabSpace[5] + "callbackData.bIsLast = true;\n"
+                      + tabSpace[5] + "curSocket.emit(EVENTS."+ rspEventName +", callbackData);\n"
                       + tabSpace[4] + "});\n\n";
         }
 
