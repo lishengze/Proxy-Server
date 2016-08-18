@@ -221,29 +221,32 @@ io.on('connection', function(rootSocket) {
 
 								//Man3 Grid Data
                 curSocket.on(EVENTS.ReqQryOidRelationTopic, function(reqField) {
-										console.log('\n');
-										console.log(reqField);
-										if (reqField.reqObject.ObjectID === "A.a") {
-											var HoldObjectIDArray = ["Active", "TopMemory", "TopCPU", "TopProcess","Network"]
-										} else {
-											var HoldObjectIDArray = ["Active", "HandleRelayLogin", "HandleRelayLoginError", "HandleNotification","MBLSize"]
-										}
+                    console.log('\n');
+                    console.log(reqField);
+                    if (reqField.reqObject.ObjectID === "A.a") {
+                        // var HoldObjectIDArray = ["Active", "TopMemory", "TopCPU", "TopProcess","Network"]
+                        var HoldObjectIDArray = ["TopMemory"]
+                    } else {
+                        // var HoldObjectIDArray = ["Active", "HandleRelayLogin", "HandleRelayLoginError", "HandleNotification","MBLSize"]
+                        var HoldObjectIDArray = ["HandleRelayLogin"]
+
+                    }
                     var callbackData = []
-										for (var i = 0; i < HoldObjectIDArray.length; ++i) {
-											callbackData[i] = {};
-											callbackData[i].pRspQryOidRelation = new SysUserApiStruct.CShfeFtdcRspQryOidRelationField();
-											callbackData[i].pRspQryOidRelation.ObjectID = reqField.reqObject.ObjectID;
-											callbackData[i].pRspQryOidRelation.HoldObjectID = HoldObjectIDArray[i];
-											callbackData[i].nRequestID = reqField.RequestId;
+                    for (var i = 0; i < HoldObjectIDArray.length; ++i) {
+                        callbackData[i] = {};
+                        callbackData[i].pRspQryOidRelation = new SysUserApiStruct.CShfeFtdcRspQryOidRelationField();
+                        callbackData[i].pRspQryOidRelation.ObjectID = reqField.reqObject.ObjectID;
+                        callbackData[i].pRspQryOidRelation.HoldObjectID = HoldObjectIDArray[i];
+                        callbackData[i].nRequestID = reqField.RequestId;
 
-											if (i === HoldObjectIDArray.length-1) {
-												callbackData[i].bIsLast = true;
-											} else {
-												callbackData[i].bIsLast = false;
-											}
+                        if (i === HoldObjectIDArray.length-1) {
+                            callbackData[i].bIsLast = true;
+                        } else {
+                            callbackData[i].bIsLast = false;
+                        }
 
-											curSocket.emit(EVENTS.RspQryOidRelationTopic, callbackData[i]);
-										}
+                        curSocket.emit(EVENTS.RspQryOidRelationTopic, callbackData[i]);
+                    }
 
                 });
 
