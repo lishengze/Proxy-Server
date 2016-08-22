@@ -14,7 +14,7 @@ var userLoginedIn    = [];
 var userSocketioId   = [];
 var userCount        = 0;
 var isHttps          = true;
-var idNumber         = 10;
+var idNumber         = 1000;
 
 if (true === isHttps) {
 	var options = {
@@ -89,10 +89,10 @@ io.on('connection', function(rootSocket) {
 				if (undefined === userSocketioId[userInfo.UserID]) {
 					userSocketioId[userInfo.UserID] = getIdArray(idNumber);
 				}
-				console.log (userSocketioId[userInfo.UserID]);
+				// console.log (userSocketioId[userInfo.UserID]);
 
 				var curNumberId = userSocketioId[userInfo.UserID].shift();
-				OutputMessage("Proxy-Server: user: " + userInfo.UserID + " , numberid:  " + curNumberId);
+				OutputMessage("Proxy-Server: user: " + userInfo.UserID + " , numberid:        " + curNumberId);
 
 				CurUserSocketioId = userInfo.UserID + curNumberId;
 				userLoginedIn[CurUserSocketioId] = {}
@@ -101,7 +101,7 @@ io.on('connection', function(rootSocket) {
 
         if (undefined === userConnection[CurUserSocketioId])
         {
-            console.log(CurUserSocketioId + ' first time!');
+            // console.log(CurUserSocketioId + ' first time!');
 
             userConnection[CurUserSocketioId] = {};
             userConnection[CurUserSocketioId].socket = io.of('/' + CurUserSocketioId);
@@ -211,7 +211,10 @@ io.on('connection', function(rootSocket) {
                     curSocket.emit(EVENTS.RspQrySyslogInfoTopic, callbackData);
                 });
 
+                // Man4, Subscriber
                 curSocket.on(EVENTS.ReqQrySubscriberTopic, function(reqField) {
+                    console.log('\n');
+					console.log(reqField);
                     var callbackData = {}
                     callbackData.pRspQrySubscriber = new SysUserApiStruct.CShfeFtdcRspQrySubscriberField();
                     callbackData.nRequestID = reqField.RequestId;
