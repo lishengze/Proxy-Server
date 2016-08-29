@@ -7,13 +7,15 @@ var SysUserApiStruct = require ('./SysUserApiStruct.js');
 var toolFunc         = require("./tool-function.js");
 var OutputMessage    = toolFunc.OutputMessage;
 var getSubString     = toolFunc.getSubString;
+var MinusTime        = toolFunc.MinusTime;
+var transID          = toolFunc.transID;
 
 var userConnection   = [];
 var userSocket       = [];
 var userLoginedIn    = [];
 var userSocketioId   = [];
 var userCount        = 0;
-var isHttps          = true;
+var isHttps          = false;
 var idNumber         = 1000;
 
 if (true === isHttps) {
@@ -211,17 +213,57 @@ io.on('connection', function(rootSocket) {
                     curSocket.emit(EVENTS.RspQrySyslogInfoTopic, callbackData);
                 });
 
+
+
                 // Man4, Subscriber
                 curSocket.on(EVENTS.ReqQrySubscriberTopic, function(reqField) {
                     console.log('\n');
 					console.log(reqField);
+
+                    var unRealTimeDataNumber = 5;
+                    var timeInterval = 3;
+
+                    var transObject = transID(reqField.reqObject.ObjectID);
                     var callbackData = {}
-                    callbackData.pRspQrySubscriber = new SysUserApiStruct.CShfeFtdcRspQrySubscriberField();
-                    callbackData.nRequestID = reqField.RequestId;
-                    callbackData.bIsLast = true;
-                    curSocket.emit(EVENTS.RspQrySubscriberTopic, callbackData);
+                    callbackData = new SysUserApiStruct.CShfeFtdcRtnObjectAttrField();
+                    callbackData.ObjectID = transObject.ObjectID;
+                    callbackData.AttrType = transObject.AttrType;
+                    var curWholeTime = (new Date()).toLocaleString();
+                    var curDate = (curWholeTime.substring(0,11)).replace(/-/g, '');
+                    var curTime = curWholeTime.substring(11);
+
+                    console.log(curWholeTime);
+                    console.log(curDate);
+                    console.log(curTime);
+
+                    for (var i =0; i<unRealTimeDataNumber; ++i) {
+                         callbackData.AttrValue = ((5 * Math.random())).toString();
+                         callbackData.MonDate = curDate;
+                         callbackData.MonTime = MinusTime(curTime, timeInterval*(unRealTimeDataNumber-i-1));
+                        //  console.log (callbackData.MonTime );
+                         curSocket.emit(EVENTS.RtnObjectAttrTopic, callbackData);
+                    }
+
+                    console.log ('\nReal Time:');
+
+                    setInterval(function(){
+                        callbackData.AttrValue = ((5 * Math.random())).toString();
+                        var wholeTime = (new Date()).toLocaleString();
+                        callbackData.MonDate = (wholeTime.substring(0,11)).replace(/-/g, '');
+                        callbackData.MonTime = wholeTime.substring(11);
+                        curSocket.emit(EVENTS.RtnObjectAttrTopic, callbackData);
+                        console.log (callbackData.MonTime);
+                    }, timeInterval*1000)
+
+                    curSocket.emit(EVENTS.RtnObjectAttrTopic, callbackData);
                 });
 
+                {
+                    // callbackData.pRspQrySubscriber = new SysUserApiStruct.CShfeFtdcRspQrySubscriberField();
+                    // callbackData.nRequestID = reqField.RequestId;
+                    // callbackData.bIsLast = true;
+                    // curSocket.emit(EVENTS.RspQrySubscriberTopic, callbackData);
+                }
 								//Man3 Grid Data
                 curSocket.on(EVENTS.ReqQryOidRelationTopic, function(reqField) {
                     console.log('\n');

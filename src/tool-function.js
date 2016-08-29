@@ -20,6 +20,45 @@ function getSubString(originData, startCharValue, endCharValue) {
     return subString;
 }
 
+function MinusTime(curTime, timeInterval) {
+    // console.log ('curTime: ' + curTime);
+    // console.log ('timeInterval: ' + timeInterval);
+
+    var timeArray = curTime.split(':');
+    for (var i = 0; i < timeArray.length; ++i) {
+        timeArray[i] = parseInt(timeArray[i]);
+    }
+
+    // console.log(timeArray);
+
+    var timeSum = timeArray[0] * 60 * 60 + timeArray[1]*60 + timeArray[2] - timeInterval;
+    timeArray[0] = Math.floor(timeSum / (60*60));
+    timeArray[1] = Math.floor((timeSum - timeArray[0] * 60 * 60) / 60);
+    timeArray[2] = timeSum - timeArray[0] * 60 * 60 - timeArray[1] * 60;
+
+    for (var i = 0; i < timeArray; ++i) {
+        timeArray[i] = timeArray[i].toString();
+    }
+
+    // console.log(timeArray);
+
+    return timeArray.join(':');
+}
+
+function transID(originalData) {
+    var dataArray = originalData.split('.');
+    var Object = {};
+
+    Object.AttrType = dataArray[dataArray.length-1];
+    Object.ObjectID = originalData.substring(0, originalData.length - Object.AttrType.length-1);
+    console.log(Object);
+    return Object;
+}
+
+exports.transID = transID;
+
+exports.MinusTime = MinusTime;
+
 exports.OutputMessage = OutputMessage;
 
 exports.getSubString  = getSubString;
