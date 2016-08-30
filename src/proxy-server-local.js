@@ -15,7 +15,7 @@ var userSocket       = [];
 var userLoginedIn    = [];
 var userSocketioId   = [];
 var userCount        = 0;
-var isHttps          = false;
+var isHttps          = true;
 var idNumber         = 1000;
 
 if (true === isHttps) {
@@ -252,7 +252,7 @@ io.on('connection', function(rootSocket) {
                         callbackData.MonDate = (wholeTime.substring(0,11)).replace(/-/g, '');
                         callbackData.MonTime = wholeTime.substring(11);
                         curSocket.emit(EVENTS.RtnObjectAttrTopic, callbackData);
-                        console.log (callbackData.MonTime);
+                        // console.log (callbackData.MonTime);
                     }, timeInterval*1000)
 
                     curSocket.emit(EVENTS.RtnObjectAttrTopic, callbackData);
