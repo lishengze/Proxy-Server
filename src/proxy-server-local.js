@@ -220,7 +220,7 @@ io.on('connection', function(rootSocket) {
                     console.log('\n');
 					console.log(reqField);
 
-                    var unRealTimeDataNumber = 5;
+                    var unRealTimeDataNumber = 1;
                     var timeInterval = 3;
 
                     var transObject = transID(reqField.reqObject.ObjectID);
