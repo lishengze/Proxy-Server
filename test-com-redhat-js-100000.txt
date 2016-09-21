@@ -1,0 +1,186 @@
+
+StartTime:    Wed Sep 21 2016 10:21:43 GMT+0800 (CST)
+TestTime :     1s
+SumCallbkNumb: 36588
+AveCallbkNumb: 36588
+BandWidth:     15.07379150390625M/s
+g_reqNumb:     1
+EndTime:       Wed Sep 21 2016 10:21:44 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:21:44 GMT+0800 (CST)
+TestTime :     1s
+SumCallbkNumb: 38075
+AveCallbkNumb: 38075
+BandWidth:     15.686416625976564M/s
+g_reqNumb:     2
+EndTime:       Wed Sep 21 2016 10:21:45 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:21:45 GMT+0800 (CST)
+TestTime :     1s
+SumCallbkNumb: 37256
+AveCallbkNumb: 37256
+BandWidth:     15.3489990234375M/s
+g_reqNumb:     3
+EndTime:       Wed Sep 21 2016 10:21:46 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:21:46 GMT+0800 (CST)
+TestTime :     1s
+SumCallbkNumb: 36949
+AveCallbkNumb: 36949
+BandWidth:     15.222518920898438M/s
+g_reqNumb:     4
+EndTime:       Wed Sep 21 2016 10:21:47 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:21:47 GMT+0800 (CST)
+TestTime :     1s
+SumCallbkNumb: 36466
+AveCallbkNumb: 36466
+BandWidth:     15.023529052734375M/s
+g_reqNumb:     5
+EndTime:       Wed Sep 21 2016 10:21:48 GMT+0800 (CST)
+
+--- Reset Test Time! ---
+g_sec: 5    g_min: 1
+
+StartTime:    Wed Sep 21 2016 10:21:48 GMT+0800 (CST)
+TestTime :     5s
+SumCallbkNumb: 188235
+AveCallbkNumb: 37647
+BandWidth:     15.510086059570312M/s
+g_reqNumb:     1
+EndTime:       Wed Sep 21 2016 10:21:53 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:21:53 GMT+0800 (CST)
+TestTime :     5s
+SumCallbkNumb: 184687
+AveCallbkNumb: 36937.4
+BandWidth:     15.217739868164063M/s
+g_reqNumb:     2
+EndTime:       Wed Sep 21 2016 10:21:58 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:21:58 GMT+0800 (CST)
+TestTime :     5s
+SumCallbkNumb: 185914
+AveCallbkNumb: 37182.8
+BandWidth:     15.318841552734375M/s
+g_reqNumb:     3
+EndTime:       Wed Sep 21 2016 10:22:03 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:22:03 GMT+0800 (CST)
+TestTime :     5s
+SumCallbkNumb: 184147
+AveCallbkNumb: 36829.4
+BandWidth:     15.173245239257813M/s
+g_reqNumb:     4
+EndTime:       Wed Sep 21 2016 10:22:08 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:22:08 GMT+0800 (CST)
+TestTime :     5s
+SumCallbkNumb: 185108
+AveCallbkNumb: 37021.6
+BandWidth:     15.252429199218751M/s
+g_reqNumb:     5
+EndTime:       Wed Sep 21 2016 10:22:13 GMT+0800 (CST)
+
+--- Reset Test Time! ---
+g_sec: 30    g_min: 1
+
+StartTime:    Wed Sep 21 2016 10:22:13 GMT+0800 (CST)
+TestTime :     30s
+SumCallbkNumb: 1090327
+AveCallbkNumb: 36344.23333333333
+BandWidth:     14.973362731933594M/s
+g_reqNumb:     1
+EndTime:       Wed Sep 21 2016 10:22:43 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:22:43 GMT+0800 (CST)
+TestTime :     30s
+SumCallbkNumb: 1071756
+AveCallbkNumb: 35725.2
+BandWidth:     14.718328857421875M/s
+g_reqNumb:     2
+EndTime:       Wed Sep 21 2016 10:23:13 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:23:13 GMT+0800 (CST)
+TestTime :     30s
+SumCallbkNumb: 1017164
+AveCallbkNumb: 33905.46666666667
+BandWidth:     13.968621826171875M/s
+g_reqNumb:     3
+EndTime:       Wed Sep 21 2016 10:23:43 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:23:43 GMT+0800 (CST)
+TestTime :     30s
+SumCallbkNumb: 1079295
+AveCallbkNumb: 35976.5
+BandWidth:     14.821861267089844M/s
+g_reqNumb:     4
+EndTime:       Wed Sep 21 2016 10:24:14 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:24:14 GMT+0800 (CST)
+TestTime :     30s
+SumCallbkNumb: 1050806
+AveCallbkNumb: 35026.86666666667
+BandWidth:     14.430624389648438M/s
+g_reqNumb:     5
+EndTime:       Wed Sep 21 2016 10:24:44 GMT+0800 (CST)
+
+--- Reset Test Time! ---
+g_sec: 60    g_min: 1
+
+StartTime:    Wed Sep 21 2016 10:24:44 GMT+0800 (CST)
+TestTime :     60s
+SumCallbkNumb: 2002378
+AveCallbkNumb: 33372.96666666667
+BandWidth:     13.749238586425781M/s
+g_reqNumb:     1
+EndTime:       Wed Sep 21 2016 10:25:44 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:25:44 GMT+0800 (CST)
+TestTime :     60s
+SumCallbkNumb: 2006823
+AveCallbkNumb: 33447.05
+BandWidth:     13.779759979248047M/s
+g_reqNumb:     2
+EndTime:       Wed Sep 21 2016 10:26:44 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:26:44 GMT+0800 (CST)
+TestTime :     60s
+SumCallbkNumb: 2081571
+AveCallbkNumb: 34692.85
+BandWidth:     14.293013763427734M/s
+g_reqNumb:     3
+EndTime:       Wed Sep 21 2016 10:27:44 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:27:44 GMT+0800 (CST)
+TestTime :     60s
+SumCallbkNumb: 1987307
+AveCallbkNumb: 33121.78333333333
+BandWidth:     13.64575424194336M/s
+g_reqNumb:     4
+EndTime:       Wed Sep 21 2016 10:28:44 GMT+0800 (CST)
+
+
+StartTime:    Wed Sep 21 2016 10:28:44 GMT+0800 (CST)
+TestTime :     60s
+SumCallbkNumb: 1893595
+AveCallbkNumb: 31559.916666666668
+BandWidth:     13.00228500366211M/s
+g_reqNumb:     5
+EndTime:       Wed Sep 21 2016 10:29:44 GMT+0800 (CST)
+
